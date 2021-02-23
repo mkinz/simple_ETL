@@ -4,11 +4,10 @@ import petl as etl
 import os
 import glob
 
+source = 'C:\\Users\\matth\\Downloads\\dae-challenge\\dae-challenge\\x-lab-data'
 
 class XLabData:
-    def set_up_headers(self,wildcard):
-
-        source = 'C:\\Users\\matth\\Downloads\\dae-challenge\\dae-challenge\\x-lab-data'
+    def set_up_headers(self,source, wildcard):
         path = source + wildcard
         files_to_read = []
         for file in glob.glob(path):
@@ -26,9 +25,7 @@ class XLabData:
 
 
     ### iterate over all files to get data from second column
-    def build_xlab_dataframe(self, wildcard):
-
-        source = 'C:\\Users\\matth\\Downloads\\dae-challenge\\dae-challenge\\x-lab-data'
+    def build_xlab_dataframe(self, source, wildcard):
         path = source + wildcard
         files_to_read = []
 
@@ -36,7 +33,7 @@ class XLabData:
             files_to_read.append(file)
         regex = re.compile('.*\t(.*)')
 
-        data_headers = XLabData().set_up_headers(wildcard)
+        data_headers = XLabData().set_up_headers(source, wildcard)
         df = pd.DataFrame(columns=data_headers)
         # print(df)
 
@@ -51,10 +48,11 @@ class XLabData:
 
 
     def write_new_xlab_csv_files(self):
+        source = 'C:\\Users\\matth\\Downloads\\dae-challenge\\dae-challenge\\x-lab-data'
         destination = 'C:\\Users\\matth\\Downloads\\dae-challenge\\dae-challenge\\x-lab-data'
         #build new XLabData dataframes with specific wildcards
-        hall_data = XLabData().build_xlab_dataframe("\\*Hall*txt")
-        icp_data = XLabData().build_xlab_dataframe("\\*ICP*txt")
+        hall_data = XLabData().build_xlab_dataframe(source, "\\*Hall*txt")
+        icp_data = XLabData().build_xlab_dataframe(source, "\\*ICP*txt")
         #convert dataframes to tables with petl
         hall_table = etl.fromdataframe(hall_data)
         icp_table = etl.fromdataframe(icp_data)
@@ -62,8 +60,8 @@ class XLabData:
         print(hall_table)
         print(icp_table)
         #write tables to csv
-        etl.tocsv(hall_table, destination + "\\hall_xlab.csv")
-        etl.tocsv(icp_table,  destination + "\\icp_xlab.csv")
+        #etl.tocsv(hall_table, destination + "\\hall_xlab.csv")
+        #etl.tocsv(icp_table,  destination + "\\icp_xlab.csv")
         return
 
 
