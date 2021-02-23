@@ -4,8 +4,6 @@ import petl as etl
 import os
 import glob
 
-source = 'C:\\Users\\matth\\Downloads\\dae-challenge\\dae-challenge\\x-lab-data'
-
 class XLabData:
     def set_up_headers(self,source, wildcard):
         path = source + wildcard
@@ -47,9 +45,7 @@ class XLabData:
         return df
 
 
-    def write_new_xlab_csv_files(self):
-        source = 'C:\\Users\\matth\\Downloads\\dae-challenge\\dae-challenge\\x-lab-data'
-        destination = 'C:\\Users\\matth\\Downloads\\dae-challenge\\dae-challenge\\x-lab-data'
+    def write_new_xlab_csv_files(self, source, destination):
         #build new XLabData dataframes with specific wildcards
         hall_data = XLabData().build_xlab_dataframe(source, "\\*Hall*txt")
         icp_data = XLabData().build_xlab_dataframe(source, "\\*ICP*txt")
@@ -60,12 +56,14 @@ class XLabData:
         print(hall_table)
         print(icp_table)
         #write tables to csv
-        #etl.tocsv(hall_table, destination + "\\hall_xlab.csv")
-        #etl.tocsv(icp_table,  destination + "\\icp_xlab.csv")
+        etl.tocsv(hall_table, destination + "\\hall_xlab.csv")
+        etl.tocsv(icp_table,  destination + "\\icp_xlab.csv")
         return
 
+source = 'C:\\Users\\matth\\Downloads\\dae-challenge\\dae-challenge\\x-lab-data'
+destination = 'C:\\Users\\matth\\Downloads\\dae-challenge\\dae-challenge\\x-lab-data'
 
-write_em = XLabData().write_new_xlab_csv_files()
+write_em = XLabData().write_new_xlab_csv_files(source, destination)
 
 # This is for merging dataframes together
 def merge_csv(files_to_merge):
