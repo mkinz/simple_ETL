@@ -63,13 +63,14 @@ class XLabData:
 source = 'C:\\Users\\matth\\Downloads\\dae-challenge\\dae-challenge\\x-lab-data'
 destination = 'C:\\Users\\matth\\Downloads\\dae-challenge\\dae-challenge\\x-lab-data'
 
-write_em = XLabData().write_new_xlab_csv_files(source, destination)
+#write_em = XLabData().write_new_xlab_csv_files(source, destination)
 
 # This is for merging dataframes together
-def merge_csv(files_to_merge):
+def merge_csv(source, destination):
+    files_to_merge = glob.glob(source + "\\*csv")
     dfs = [pd.read_csv(f) for f in files_to_merge]
-    finaldf = pd.concat(dfs, axis=1, join='outer').to_csv("master.csv")
+    finaldf = pd.concat(dfs, axis=1, join='outer').to_csv(destination + "\\master.csv")
     return finaldf
 
-# inputs = ["icp_it_works.csv", "procurement.csv","hot_press.csv"]
-# merge_csv(inputs)
+merge_csv(source, destination)
+
