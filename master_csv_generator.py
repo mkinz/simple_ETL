@@ -5,6 +5,7 @@ import os
 import glob
 
 class XLabData:
+
     def set_up_headers(self,source, wildcard):
         path = source + wildcard
         files_to_read = []
@@ -60,17 +61,23 @@ class XLabData:
         etl.tocsv(icp_table,  destination + "\\icp_xlab.csv")
         return
 
+
+class CSVMerger:
+    # This is for merging dataframes together
+    def merge_csv(self,source, destination):
+        files_to_merge = glob.glob(source + "\\*csv")
+        dfs = [pd.read_csv(f) for f in files_to_merge]
+        finaldf = pd.concat(dfs, axis=1, join='outer').to_csv(destination + "\\master.csv")
+        return finaldf
+
 source = 'C:\\Users\\matth\\Downloads\\dae-challenge\\dae-challenge\\x-lab-data'
 destination = 'C:\\Users\\matth\\Downloads\\dae-challenge\\dae-challenge\\x-lab-data'
 
-#write_em = XLabData().write_new_xlab_csv_files(source, destination)
+xlab_data_writer = XLabData().write_new_xlab_csv_files(source, destination)
+merger = CSVMerger().merge_csv(source, destination)
 
-# This is for merging dataframes together
-def merge_csv(source, destination):
-    files_to_merge = glob.glob(source + "\\*csv")
-    dfs = [pd.read_csv(f) for f in files_to_merge]
-    finaldf = pd.concat(dfs, axis=1, join='outer').to_csv(destination + "\\master.csv")
-    return finaldf
 
-merge_csv(source, destination)
+class Runner:
+    def run_app(self):
+        pass
 
