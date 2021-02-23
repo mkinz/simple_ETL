@@ -51,18 +51,23 @@ class XLabData:
 
 
     def write_new_xlab_csv_files(self):
+        destination = 'C:\\Users\\matth\\Downloads\\dae-challenge\\dae-challenge\\x-lab-data'
+        #build new XLabData dataframes with specific wildcards
         hall_data = XLabData().build_xlab_dataframe("\\*Hall*txt")
         icp_data = XLabData().build_xlab_dataframe("\\*ICP*txt")
-
+        #convert dataframes to tables with petl
         hall_table = etl.fromdataframe(hall_data)
         icp_table = etl.fromdataframe(icp_data)
 
         print(hall_table)
         print(icp_table)
+        #write tables to csv
+        etl.tocsv(hall_table, destination + "\\hall_xlab.csv")
+        etl.tocsv(icp_table,  destination + "\\icp_xlab.csv")
+        return
 
-###write it to csv
-#etl.tocsv(table, "icp_test.csv")
 
+write_em = XLabData().write_new_xlab_csv_files()
 
 # This is for merging dataframes together
 def merge_csv(files_to_merge):
