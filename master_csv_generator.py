@@ -5,20 +5,6 @@ import os
 import glob
 
 
-def get_path():
-    pwd = 'C:\\Users\\matth\\Downloads\\dae-challenge\\dae-challenge\\x-lab-data'
-    wildcard = "\\*Hall*txt"
-    path = pwd + wildcard
-    return path
-
-
-def find_files(path):
-    files_to_read = []
-    for file in glob.glob(path):
-        files_to_read.append(file)
-    return files_to_read
-
-
 class XLabData:
     def set_up_headers(self,wildcard):
 
@@ -64,17 +50,17 @@ class XLabData:
         return df
 
 
+    def write_new_xlab_csv_files(self):
+        hall_data = XLabData().build_xlab_dataframe("\\*Hall*txt")
+        icp_data = XLabData().build_xlab_dataframe("\\*ICP*txt")
 
-hall_data = XLabData().build_xlab_dataframe("\\*Hall*txt")
-icp_data = XLabData().build_xlab_dataframe("\\*ICP*txt")
+        hall_table = etl.fromdataframe(hall_data)
+        icp_table = etl.fromdataframe(icp_data)
 
-hall_table = etl.fromdataframe(hall_data)
-icp_table = etl.fromdataframe(icp_data)
+        print(hall_table)
+        print(icp_table)
 
-print(hall_table)
-print(icp_table)
-
-###write it to
+###write it to csv
 #etl.tocsv(table, "icp_test.csv")
 
 
