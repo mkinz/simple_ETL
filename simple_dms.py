@@ -5,14 +5,26 @@ import os
 import sys
 import glob
 
-class CSVMerger:
-    """Merger class with single class method
-    for merging all the CSV files together."""
 
-    def merge_csv(self,source: str, destination: str) -> pd.DataFrame:
-        files_to_merge = glob.glob(os.path.join(source,"*csv"))
-        dfs = [pd.read_csv(f) for f in files_to_merge]
-        finaldf = pd.concat(dfs, axis=1, join='outer').to_csv(os.path.join(destination, "master.csv"))
+class CSVMerger:
+
+    """Merger class with single class method
+    for merging all the CSV files together.
+    It has built in protection to ensure that we
+    do not join an master.csv file into the final
+    master.csv file"""
+
+    def merge_csv(self, source: str, destination: str) -> pd.DataFrame:
+        # generate list of files to merge
+        files_to_merge = glob.glob(os.path.join(source, "*csv"))
+        # these next steps ensure we aren't merging a master.csv file with other files to make a new master.csv
+        file_to_remove = os.path.isfile(os.path.join(source,"X-Materials_master_data.csv"))
+        if file_to_remove in files_to_merge:
+            files_to_merge.remove(file_to_remove)
+        # create dataframe of the files in files_to_merge
+        dfs = [pd.read_csv(file) for file in files_to_merge]
+        # join the dataframes together with an outer join, then save it as the master.csv file
+        finaldf = pd.concat(dfs, axis=1, join='outer').to_csv(os.path.join(destination, "X-Materials_master_data.csv"))
         return finaldf
 
 
@@ -24,7 +36,7 @@ class XLabDataEngine:
     and the engine converts these files into a single
     10xN or 12xN matrix with all data contain within."""
 
-    def set_up_headers(self,source: str, wildcard: str) -> list:
+    def set_up_headers(self, source: str, wildcard: str) -> list:
         """To convert the set of Hall*txt and ICP*txt files
         located in the path into a single 10xN or 12xN dataframe,
         we need do a lot of swizzling. First, we need to establish
@@ -32,7 +44,7 @@ class XLabDataEngine:
         written out into a single row."""
 
         # set the path
-        #path = source + wildcard
+        # path = source + wildcard
         path = os.path.join(source, wildcard)
         # list to hold files
         files_to_read = []
@@ -61,7 +73,7 @@ class XLabDataEngine:
         # functionally very similar and code not very DRY which hurts my soul a bit, but again, for time's sake
         # get all the files in the path -> this really should be it's own class method since it's exactly
         # the same as above
-        #path = source + wildcard
+        # path = source + wildcard
         path = os.path.join(source, wildcard)
         files_to_read = []
         for file in glob.glob(path):
@@ -91,47 +103,45 @@ class XLabDataEngine:
         # return shiny new dataframe with all the data
         return df
 
+    def xlab_csv_file_builder(self, source: str, destination: str) -> None:
+        """this class method  instantiates the XlabDataEngine,
+        calls the build methods, converts them to tables using the
+        petl python library, and then writes the tables to csv files.
+        Filenames are hard-coded in. """
 
-    def write_new_xlab_csv_files(self, source: str, destination: str) -> None:
-        #build new XLabData dataframes with specific wildcards
+        # build new XLabData dataframes with specific wildcards
         hall_data = XLabDataEngine().build_xlab_dataframe(source, "*Hall*txt")
         icp_data = XLabDataEngine().build_xlab_dataframe(source, "*ICP*txt")
-        #convert dataframes to tables with petl
+
+        # convert dataframes to tables with petl, needed for correct data formatting
         hall_table = etl.fromdataframe(hall_data)
         icp_table = etl.fromdataframe(icp_data)
 
-        print(hall_table)
-        print(icp_table)
-        #write tables to csv
+        # write tables to csv
         etl.tocsv(hall_table, os.path.join(destination, "hall_xlab.csv"))
-        etl.tocsv(icp_table,  os.path.join(destination, "icp_xlab.csv"))
+        etl.tocsv(icp_table, os.path.join(destination, "icp_xlab.csv"))
         return
 
-
-
-
 class Deleter:
-
     """Deleter class has two methods for deleting files.
     Currently only using the delete_current_master_csv_file()
     class method in the runner to protect against possibly
     including the master.csv in the collection of individual
-    CSV files."""
+    CSV files. Redundant because of merger method protection."""
 
-    def delete_temp_xlab_csv_files(self, destination: str) -> None:
-        path = destination
-        xlab_files = ["hall_xlab.csv","icp_xlab.csv"]
+    def delete_temp_xlab_csv_files(self, source: str) -> None:
+        xlab_files = ["hall_xlab.csv", "icp_xlab.csv"]
         for file in xlab_files:
-            if os.path.isfile(os.path.join(path, file)):
-                os.remove(os.path.join(path, file))
+            if os.path.isfile(os.path.join(source, file)):
+                os.remove(os.path.join(source, file))
 
-    def delete_current_master_csv_file(self, destination: str) -> None:
-        path = destination
-        master_csv = "master.csv"
-        if os.path.isfile(os.path.join(path,master_csv)):
-            os.remove(os.path.join(path,master_csv))
+    def delete_current_master_csv_file(self, source: str) -> None:
+        """look for a master csv file in the destination path
+        and remove it if it exists"""
+        master_csv = "X-Materials_master_data.csv"
+        if os.path.isfile(os.path.join(source, master_csv)):
+            os.remove(os.path.join(source, master_csv))
         return
-
 
 
 class Runner:
@@ -141,18 +151,19 @@ class Runner:
 
     def cmd_line_interface(self) -> None:
         print("Welcome to the Data Management System application!")
+        print("Please enter the source path now:\n")
         while True:
-            print("Please enter the source path now:\n")
             source = input()
             if not os.path.isdir(source):
-                print(f"{source} is not a valid path.\nPlease double check your path "
+                print(f"{source} is not a valid path.\n\nPlease double check your path "
                       f"and try running the app again.")
-                break
+                sys.exit()
             print("Please enter the destination (path to save files) now:\n")
             destination = input()
             if not os.path.isdir(destination):
-                print(f"{destination} is not a valid path.\nPlease double check your path "
+                print(f"{destination} is not a valid path.\n\nPlease double check your path "
                       f"and try running the app again.")
+                sys.exit()
             print(f"Your source path is: \n{source}\n\n and destination path is: \n{destination}\n")
             if source == destination:
                 print("WARNING: source and destination are the same path!\n")
@@ -160,13 +171,13 @@ class Runner:
             answer = input()
             affirmative = ["yes", "Yes", 'YES', 'y', 'Y']
             negative = ["no", "No", "NO", "n", "N", "no siree"]
+
             if answer in affirmative:
                 break
             elif answer in negative:
-                print("OK, please try again.")
-            else:
-                print("I didn't understand that. Please try again.")
-        print("source and destination paths saved.")
+                print("Ok, exiting. Please check your paths and try again.")
+                sys.exit() #this should probably be in a while loop
+        print("\nSource and destination paths saved.\n")
         while True:
             print('What would you like to do?')
             print("1. Generate new master CSV from existing files in source")
@@ -176,16 +187,23 @@ class Runner:
                 if options == 1:
                     try:
                         print("Generating master.csv file now...\n")
+
                         myXlab_data_writer = XLabDataEngine()
-                        myXlab_data_writer.write_new_xlab_csv_files(source, destination)
-                        myDeleter = Deleter().delete_current_master_csv_file(destination)
+                        myXlab_data_writer.xlab_csv_file_builder(source, destination)
+
+                        myDeleter = Deleter()
+                        myDeleter.delete_current_master_csv_file(destination)
+
                         myMerger = CSVMerger()
                         myMerger.merge_csv(source, destination)
-                        print(f"Done.\nmaster.csv file located in: \n{destination}\nExiting. Have a nice day!")
+
+                        print(f"Done.\nX-Materials_master_CSV.csv file "
+                              f"located in: \n{destination}\nExiting. Have a nice day!")
                         break
                     except IndexError:
-                        print(f"WARNING: Cannot continue. Please double check your source path. It"
-                              f" is currently set to \n{source}\n")
+                        print(f"WARNING: Cannot continue. Possibly missing data in your source path."
+                              f"\nPlease double check your source path. It"
+                              f" is currently set to: \n\n{source}\n")
                         sys.exit(-1)
                 elif options == 2:
                     print("Exiting without doing anything.\nHave a nice day!")
@@ -194,9 +212,18 @@ class Runner:
                     print("Sorry, I didn't understand that.\nYou can only select 1 or 2.")
             except ValueError:
                 print("You can only select 1 or 2.")
-        return
+            else:
+                print("I didn't understand that. Please try again.")
 
-myrunner = Runner().cmd_line_interface()
+            return
+
+def main():
+    myrunner = Runner().cmd_line_interface()
+
+if __name__ == '__main__':
+    main()
+
+
 
 '''source = 'C:\\Users\\matth\\Downloads\\dae-challenge\\dae-challenge\\x-lab-data'
 destination = 'C:\\Users\\matth\\Downloads\\dae-challenge\\dae-challenge\\x-lab-data'
