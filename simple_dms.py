@@ -32,7 +32,8 @@ class XLabDataEngine:
         written out into a single row."""
 
         # set the path
-        path = source + wildcard
+        #path = source + wildcard
+        path = os.path.join(source, wildcard)
         # list to hold files
         files_to_read = []
         # iterate over files in path, adding them to the list
@@ -60,7 +61,8 @@ class XLabDataEngine:
         # functionally very similar and code not very DRY which hurts my soul a bit, but again, for time's sake
         # get all the files in the path -> this really should be it's own class method since it's exactly
         # the same as above
-        path = source + wildcard
+        #path = source + wildcard
+        path = os.path.join(source, wildcard)
         files_to_read = []
         for file in glob.glob(path):
             files_to_read.append(file)
@@ -92,8 +94,8 @@ class XLabDataEngine:
 
     def write_new_xlab_csv_files(self, source: str, destination: str) -> None:
         #build new XLabData dataframes with specific wildcards
-        hall_data = XLabDataEngine().build_xlab_dataframe(source, "\\*Hall*txt")
-        icp_data = XLabDataEngine().build_xlab_dataframe(source, "\\*ICP*txt")
+        hall_data = XLabDataEngine().build_xlab_dataframe(source, "*Hall*txt")
+        icp_data = XLabDataEngine().build_xlab_dataframe(source, "*ICP*txt")
         #convert dataframes to tables with petl
         hall_table = etl.fromdataframe(hall_data)
         icp_table = etl.fromdataframe(icp_data)
