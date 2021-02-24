@@ -5,6 +5,15 @@ import os
 import sys
 import glob
 
+class CSVMerger:
+    # This is for merging dataframes together
+    def merge_csv(self,source: str, destination: str) -> pd.DataFrame:
+        files_to_merge = glob.glob(source + "\\*csv")
+        dfs = [pd.read_csv(f) for f in files_to_merge]
+        finaldf = pd.concat(dfs, axis=1, join='outer').to_csv(destination + "\\master.csv")
+        return finaldf
+
+
 class XLabDataEngine:
 
     def set_up_headers(self,source: str, wildcard: str) -> list:
@@ -63,13 +72,7 @@ class XLabDataEngine:
         return
 
 
-class CSVMerger:
-    # This is for merging dataframes together
-    def merge_csv(self,source: str, destination: str) -> pd.DataFrame:
-        files_to_merge = glob.glob(source + "\\*csv")
-        dfs = [pd.read_csv(f) for f in files_to_merge]
-        finaldf = pd.concat(dfs, axis=1, join='outer').to_csv(destination + "\\master.csv")
-        return finaldf
+
 
 class Deleter:
     def delete_temp_xlab_csv_files(self, destination: str) -> None:
@@ -106,17 +109,22 @@ class Runner:
                 break
             print(f"Your source path is: \n{source}\n\n and destination path is: \n{destination}\n")
             if source == destination:
-                print("Warning: source and destination are the same path!\n")
+                print("WARNING: source and destination are the same path!\n")
             print("Is this correct? Type [y]es or [n]o.")
             answer = input()
             answers = ["yes", "Yes", 'YES', 'y', 'Y']
             if answer in answers:
-                print("source and destination paths saved.")
-                print('What would you like to do?')
-                print("1. Generate new master CSV from existing files in source")
-                print("2: Quit")
-                options = int(input())
-                if options == 1:
+                break
+            else:
+                print("I didn't understand that. Please try again.")
+        print("source and destination paths saved.")
+        print('What would you like to do?')
+        print("1. Generate new master CSV from existing files in source")
+        print("2: Quit")
+        try:
+            options = int(input())
+            if options == 1:
+                try:
                     print("Generating master.csv file now...")
                     myXlab_data_writer = XLabDataEngine()
                     myXlab_data_writer.write_new_xlab_csv_files(source, destination)
@@ -124,16 +132,18 @@ class Runner:
                     myMerger = CSVMerger()
                     myMerger.merge_csv(source, destination)
                     print(f"Done.\nmaster.csv file located in: \n{destination}\nExiting. Have a nice day!")
-                    break
-                elif options == 2:
-                    print("Exiting without doing anything.\nHave a nice day!")
-
-                    sys.exit(0)
-                else:
-                    pass
+                except IndexError:
+                    print(f"WARNING: Cannot continue. Please double check your source path. It"
+                          f" is currently set to \n{source}\n")
+                    sys.exit(-1)
+            elif options == 2:
+                print("Exiting without doing anything.\nHave a nice day!")
+                sys.exit(0)
             else:
-                continue
-        sys.exit(0)
+                print("Sorry, I didn't understand that.")
+        except ValueError:
+            print("You can only select 1 or 2.")
+
 
 myrunner = Runner().cmd_line_interface()
 
