@@ -74,14 +74,23 @@ class CSVMerger:
 
 
 
+
 class Runner:
     def cmd_line_interface(self) -> None:
         print("Welcome to the Data Management System application!")
         while True:
             print("Please enter the source path now:\n")
             source = input()
+            if not os.path.isdir(source):
+                print(f"{source} is not a valid path.\nPlease double check your path "
+                      f"and try running the app again.")
+                break
             print("Please enter the destination (path to save files) now:\n")
             destination = input()
+            if not os.path.isdir(destination):
+                print(f"{destination} is not a valid path.\nPlease double check your path "
+                      f"and try running the app again.")
+                break
             print(f"Your source path is: \n{source}\n\n and destination path is: \n{destination}\n")
             if source == destination:
                 print("Warning: source and destination are the same path!\n")
