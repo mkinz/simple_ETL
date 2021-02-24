@@ -101,8 +101,8 @@ class XLabDataEngine:
         print(hall_table)
         print(icp_table)
         #write tables to csv
-        etl.tocsv(hall_table, destination + "\\hall_xlab.csv")
-        etl.tocsv(icp_table,  destination + "\\icp_xlab.csv")
+        etl.tocsv(hall_table, os.path.join(destination, "hall_xlab.csv"))
+        etl.tocsv(icp_table,  os.path.join(destination, "icp_xlab.csv"))
         return
 
 
@@ -151,7 +151,6 @@ class Runner:
             if not os.path.isdir(destination):
                 print(f"{destination} is not a valid path.\nPlease double check your path "
                       f"and try running the app again.")
-                break
             print(f"Your source path is: \n{source}\n\n and destination path is: \n{destination}\n")
             if source == destination:
                 print("WARNING: source and destination are the same path!\n")
