@@ -6,7 +6,9 @@ import sys
 import glob
 
 class CSVMerger:
-    # This is for merging dataframes together
+    """Merger class with single class method
+    for merging all the CSV files together."""
+
     def merge_csv(self,source: str, destination: str) -> pd.DataFrame:
         files_to_merge = glob.glob(source + "\\*csv")
         dfs = [pd.read_csv(f) for f in files_to_merge]
@@ -15,6 +17,12 @@ class CSVMerger:
 
 
 class XLabDataEngine:
+    """This class contains the methods
+    that make up the engine which drives the conversion of
+    the xlab data files into a formatted, single CSV file.
+    The data is formatted in a 2x10 or 2x12 matrix,
+    and the engine converts these files into a single
+    10xN or 12xN matrix with all data contain within."""
 
     def set_up_headers(self,source: str, wildcard: str) -> list:
         path = source + wildcard
@@ -75,6 +83,13 @@ class XLabDataEngine:
 
 
 class Deleter:
+
+    """Deleter class has two methods for deleting files.
+    Currently only using the delete_current_master_csv_file()
+    class method in the runner to protect against possibly
+    including the master.csv in the collection of individual
+    CSV files."""
+
     def delete_temp_xlab_csv_files(self, destination: str) -> None:
         path = destination
         xlab_files = ["hall_xlab.csv","icp_xlab.csv"]
@@ -92,6 +107,10 @@ class Deleter:
 
 
 class Runner:
+    """This is the runner class for the command line interface
+    that makes use of a single class method. Self explanatory,
+    with conditional logic and a few loops to get input."""
+
     def cmd_line_interface(self) -> None:
         print("Welcome to the Data Management System application!")
         while True:
@@ -112,38 +131,43 @@ class Runner:
                 print("WARNING: source and destination are the same path!\n")
             print("Is this correct? Type [y]es or [n]o.")
             answer = input()
-            answers = ["yes", "Yes", 'YES', 'y', 'Y']
-            if answer in answers:
+            affirmative = ["yes", "Yes", 'YES', 'y', 'Y']
+            negative = ["no", "No", "NO", "n", "N", "no siree"]
+            if answer in affirmative:
                 break
+            elif answer in negative:
+                print("OK, please try again.")
             else:
                 print("I didn't understand that. Please try again.")
         print("source and destination paths saved.")
-        print('What would you like to do?')
-        print("1. Generate new master CSV from existing files in source")
-        print("2: Quit")
-        try:
-            options = int(input())
-            if options == 1:
-                try:
-                    print("Generating master.csv file now...")
-                    myXlab_data_writer = XLabDataEngine()
-                    myXlab_data_writer.write_new_xlab_csv_files(source, destination)
-                    myDeleter = Deleter().delete_current_master_csv_file(destination)
-                    myMerger = CSVMerger()
-                    myMerger.merge_csv(source, destination)
-                    print(f"Done.\nmaster.csv file located in: \n{destination}\nExiting. Have a nice day!")
-                except IndexError:
-                    print(f"WARNING: Cannot continue. Please double check your source path. It"
-                          f" is currently set to \n{source}\n")
-                    sys.exit(-1)
-            elif options == 2:
-                print("Exiting without doing anything.\nHave a nice day!")
-                sys.exit(0)
-            else:
-                print("Sorry, I didn't understand that.")
-        except ValueError:
-            print("You can only select 1 or 2.")
-
+        while True:
+            print('What would you like to do?')
+            print("1. Generate new master CSV from existing files in source")
+            print("2: Quit")
+            try:
+                options = int(input())
+                if options == 1:
+                    try:
+                        print("Generating master.csv file now...\n")
+                        myXlab_data_writer = XLabDataEngine()
+                        myXlab_data_writer.write_new_xlab_csv_files(source, destination)
+                        myDeleter = Deleter().delete_current_master_csv_file(destination)
+                        myMerger = CSVMerger()
+                        myMerger.merge_csv(source, destination)
+                        print(f"Done.\nmaster.csv file located in: \n{destination}\nExiting. Have a nice day!")
+                        break
+                    except IndexError:
+                        print(f"WARNING: Cannot continue. Please double check your source path. It"
+                              f" is currently set to \n{source}\n")
+                        sys.exit(-1)
+                elif options == 2:
+                    print("Exiting without doing anything.\nHave a nice day!")
+                    sys.exit(0)
+                else:
+                    print("Sorry, I didn't understand that.\nYou can only select 1 or 2.")
+            except ValueError:
+                print("You can only select 1 or 2.")
+        return
 
 myrunner = Runner().cmd_line_interface()
 
