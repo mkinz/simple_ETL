@@ -74,10 +74,7 @@ class CSVMerger:
 
 '''source = 'C:\\Users\\matth\\Downloads\\dae-challenge\\dae-challenge\\x-lab-data'
 destination = 'C:\\Users\\matth\\Downloads\\dae-challenge\\dae-challenge\\x-lab-data'
-
-xlab_data_writer = XLabData().write_new_xlab_csv_files(source, destination)
-merger = CSVMerger().merge_csv(source, destination)'''
-
+'''
 
 class Runner:
     def cmd_line_interface(self):
