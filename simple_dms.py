@@ -72,9 +72,7 @@ class CSVMerger:
         return finaldf
 
 
-'''source = 'C:\\Users\\matth\\Downloads\\dae-challenge\\dae-challenge\\x-lab-data'
-destination = 'C:\\Users\\matth\\Downloads\\dae-challenge\\dae-challenge\\x-lab-data'
-'''
+
 
 class Runner:
     def cmd_line_interface(self) -> None:
@@ -85,30 +83,37 @@ class Runner:
             print("Please enter the destination (path to save files) now:\n")
             destination = input()
             print(f"Your source path is: \n{source}\n\n and destination path is: \n{destination}\n")
+            if source == destination:
+                print("Warning: source and destination are the same path!\n")
             print("Is this correct? Type [y]es or [n]o.")
             answer = input()
             answers = ["yes", "Yes", 'YES', 'y', 'Y']
             if answer in answers:
+                print("source and destination paths saved.")
                 print('What would you like to do?')
                 print("1. Generate new master CSV from existing files in source")
-                print("2: Load new Xlab data and generate a new master CSV")
-                print("3: Quit")
+                print("2: Quit")
                 options = int(input())
                 if options == 1:
-                    myMerger = CSVMerger()
-                    myMerger.merge_csv(source, destination)
-                    break
-                elif options == 2:
+                    print("Generating master.csv file now...")
                     myXlab_data_writer = XLabDataEngine()
                     myXlab_data_writer.write_new_xlab_csv_files(source, destination)
                     myMerger = CSVMerger()
                     myMerger.merge_csv(source, destination)
+                    print(f"Done.\nmaster.csv file located in: \n{destination}\nExiting. Have a nice day!")
                     break
-                elif options == 3:
+                elif options == 2:
+                    print("Exiting without doing anything.\nHave a nice day!")
+
                     sys.exit(0)
                 else:
                     pass
-
+            else:
+                continue
         sys.exit(0)
 
 myrunner = Runner().cmd_line_interface()
+
+'''source = 'C:\\Users\\matth\\Downloads\\dae-challenge\\dae-challenge\\x-lab-data'
+destination = 'C:\\Users\\matth\\Downloads\\dae-challenge\\dae-challenge\\x-lab-data'
+'''
