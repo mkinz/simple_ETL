@@ -10,9 +10,9 @@ class CSVMerger:
     for merging all the CSV files together."""
 
     def merge_csv(self,source: str, destination: str) -> pd.DataFrame:
-        files_to_merge = glob.glob(source + "\\*csv")
+        files_to_merge = glob.glob(os.path.join(source,"*csv"))
         dfs = [pd.read_csv(f) for f in files_to_merge]
-        finaldf = pd.concat(dfs, axis=1, join='outer').to_csv(destination + "\\master.csv")
+        finaldf = pd.concat(dfs, axis=1, join='outer').to_csv(os.path.join(destination, "master.csv"))
         return finaldf
 
 
