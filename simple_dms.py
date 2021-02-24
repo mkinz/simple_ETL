@@ -71,7 +71,20 @@ class CSVMerger:
         finaldf = pd.concat(dfs, axis=1, join='outer').to_csv(destination + "\\master.csv")
         return finaldf
 
+class Deleter:
+    def delete_temp_xlab_csv_files(self, destination: str) -> None:
+        path = destination
+        xlab_files = ["hall_xlab.csv","icp_xlab.csv"]
+        for file in xlab_files:
+            if os.path.isfile(os.path.join(path, file)):
+                os.remove(os.path.join(path, file))
 
+    def delete_current_master_csv_file(self, destination: str) -> None:
+        path = destination
+        master_csv = "master.csv"
+        if os.path.isfile(os.path.join(path,master_csv)):
+            os.remove(os.path.join(path,master_csv))
+        return
 
 
 
@@ -107,6 +120,7 @@ class Runner:
                     print("Generating master.csv file now...")
                     myXlab_data_writer = XLabDataEngine()
                     myXlab_data_writer.write_new_xlab_csv_files(source, destination)
+                    myDeleter = Deleter().delete_current_master_csv_file(destination)
                     myMerger = CSVMerger()
                     myMerger.merge_csv(source, destination)
                     print(f"Done.\nmaster.csv file located in: \n{destination}\nExiting. Have a nice day!")
