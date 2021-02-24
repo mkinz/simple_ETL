@@ -7,7 +7,7 @@ import glob
 
 class XLabData:
 
-    def set_up_headers(self,source, wildcard):
+    def set_up_headers(self,source: str, wildcard: str) -> list:
         path = source + wildcard
         files_to_read = []
         for file in glob.glob(path):
@@ -25,7 +25,7 @@ class XLabData:
 
 
     ### iterate over all files to get data from second column
-    def build_xlab_dataframe(self, source, wildcard):
+    def build_xlab_dataframe(self, source: str, wildcard: str) -> pd.DataFrame:
         path = source + wildcard
         files_to_read = []
 
@@ -47,7 +47,7 @@ class XLabData:
         return df
 
 
-    def write_new_xlab_csv_files(self, source, destination):
+    def write_new_xlab_csv_files(self, source: str, destination: str) -> None:
         #build new XLabData dataframes with specific wildcards
         hall_data = XLabData().build_xlab_dataframe(source, "\\*Hall*txt")
         icp_data = XLabData().build_xlab_dataframe(source, "\\*ICP*txt")
@@ -65,7 +65,7 @@ class XLabData:
 
 class CSVMerger:
     # This is for merging dataframes together
-    def merge_csv(self,source, destination):
+    def merge_csv(self,source: str, destination: str) -> pd.DataFrame:
         files_to_merge = glob.glob(source + "\\*csv")
         dfs = [pd.read_csv(f) for f in files_to_merge]
         finaldf = pd.concat(dfs, axis=1, join='outer').to_csv(destination + "\\master.csv")
