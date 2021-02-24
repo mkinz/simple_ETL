@@ -25,42 +25,68 @@ class XLabDataEngine:
     10xN or 12xN matrix with all data contain within."""
 
     def set_up_headers(self,source: str, wildcard: str) -> list:
+        """To convert the set of Hall*txt and ICP*txt files
+        located in the path into a single 10xN or 12xN dataframe,
+        we need do a lot of swizzling. First, we need to establish
+        a header row, with all the data from column 1 of either file
+        written out into a single row."""
+
+        # set the path
         path = source + wildcard
+        # list to hold files
         files_to_read = []
+        # iterate over files in path, adding them to the list
         for file in glob.glob(path):
             files_to_read.append(file)
 
+        # regex to capture all the data in column 1 of Hall*txt of ICP*txt
         regex = re.compile('(.*)\t.*')
 
-        found_stuff = []
+        # another list to hold the data found with the regex capture
+        header_row_content = []
         # use first file in files_to_read to get headers
+        # (this is definitely memory inefficient, but it's simple and works for the sake of time)
         with open(files_to_read[0], 'r') as f:
+            # read the contents of the first file in files_to_read
             mydata = f.read()
+            # iterate on the data in column 1 using regex findall method
             for col1 in re.findall(regex, mydata):
-                found_stuff.append((col1))
-        return found_stuff
+                # for each item found, add it to header_row_content
+                header_row_content.append((col1))
+        # return this list of header row content, it will be used later to create the full dataframe
+        return header_row_content
 
-
-    ### iterate over all files to get data from second column
     def build_xlab_dataframe(self, source: str, wildcard: str) -> pd.DataFrame:
+        # functionally very similar and code not very DRY which hurts my soul a bit, but again, for time's sake
+        # get all the files in the path -> this really should be it's own class method since it's exactly
+        # the same as above
         path = source + wildcard
         files_to_read = []
-
         for file in glob.glob(path):
             files_to_read.append(file)
+
+        # regex to capture the data from column 2 of the files
         regex = re.compile('.*\t(.*)')
 
+        # instantiate an instance of the data engine, call the set_up_headers method to return list of headers
         data_headers = XLabDataEngine().set_up_headers(source, wildcard)
+        # now we create a data frame using the instance created above
         df = pd.DataFrame(columns=data_headers)
-        # print(df)
 
+        # this all repeats as above, again not DRY but we're going fast for time's sake
         for file in files_to_read:
-            list_of_found_stuff = []
+            list_of_data_from_column_two_for_dataframe_row = []
+            # open each file and read the contents
             with open(file, 'r') as f:
                 mydata = f.read()
+                # use regex findall method to find matches in the data
                 for col2 in re.findall(regex, mydata):
-                    list_of_found_stuff.append((col2))
-                df.loc[file] = list_of_found_stuff
+                    # append list with matches
+                    list_of_data_from_column_two_for_dataframe_row.append((col2))
+                # take dataframe with headers only, and insert each line from
+                # list_of_data_from_column_two_for_dataframe_row into the dataframe
+                df.loc[file] = list_of_data_from_column_two_for_dataframe_row
+        # return shiny new dataframe with all the data
         return df
 
 
