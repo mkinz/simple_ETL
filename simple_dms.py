@@ -5,7 +5,7 @@ import os
 import sys
 import glob
 
-class XLabData:
+class XLabDataEngine:
 
     def set_up_headers(self,source: str, wildcard: str) -> list:
         path = source + wildcard
@@ -33,7 +33,7 @@ class XLabData:
             files_to_read.append(file)
         regex = re.compile('.*\t(.*)')
 
-        data_headers = XLabData().set_up_headers(source, wildcard)
+        data_headers = XLabDataEngine().set_up_headers(source, wildcard)
         df = pd.DataFrame(columns=data_headers)
         # print(df)
 
@@ -49,8 +49,8 @@ class XLabData:
 
     def write_new_xlab_csv_files(self, source: str, destination: str) -> None:
         #build new XLabData dataframes with specific wildcards
-        hall_data = XLabData().build_xlab_dataframe(source, "\\*Hall*txt")
-        icp_data = XLabData().build_xlab_dataframe(source, "\\*ICP*txt")
+        hall_data = XLabDataEngine().build_xlab_dataframe(source, "\\*Hall*txt")
+        icp_data = XLabDataEngine().build_xlab_dataframe(source, "\\*ICP*txt")
         #convert dataframes to tables with petl
         hall_table = etl.fromdataframe(hall_data)
         icp_table = etl.fromdataframe(icp_data)
@@ -77,7 +77,7 @@ destination = 'C:\\Users\\matth\\Downloads\\dae-challenge\\dae-challenge\\x-lab-
 '''
 
 class Runner:
-    def cmd_line_interface(self):
+    def cmd_line_interface(self) -> None:
         print("Welcome to the Data Management System application!")
         while True:
             print("Please enter the source path now:\n")
@@ -99,7 +99,7 @@ class Runner:
                     myMerger.merge_csv(source, destination)
                     break
                 elif options == 2:
-                    myXlab_data_writer = XLabData()
+                    myXlab_data_writer = XLabDataEngine()
                     myXlab_data_writer.write_new_xlab_csv_files(source, destination)
                     myMerger = CSVMerger()
                     myMerger.merge_csv(source, destination)
