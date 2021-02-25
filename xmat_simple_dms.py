@@ -16,6 +16,7 @@ class Merger:
 
     @staticmethod
     def merge_csv(source: str, destination: str) -> pd.DataFrame:
+
         # generate list of files to merge
         files_to_merge = glob.glob(os.path.join(source, "*csv"))
 
@@ -24,13 +25,13 @@ class Merger:
         if file_to_remove in files_to_merge:
             files_to_merge.remove(file_to_remove)
 
-        # create dataframe of the files in files_to_merge
+        # create list of dataframe objects from files in files_to_merge
         dfs = [pd.read_csv(file) for file in files_to_merge]
 
         # join the dataframes together with an outer join, then save it as the master.csv file
-        finaldf = pd.concat(dfs, axis=1, join='outer').to_csv(os.path.join(destination, "X-Materials_master_data.csv"))
+        merged_dataframe = pd.concat(dfs, axis=1, join='outer').to_csv(os.path.join(destination, "X-Materials_master_data.csv"))
 
-        return finaldf
+        return merged_dataframe
 
 
 class XLabDataEngine:
@@ -114,7 +115,7 @@ class XLabDataEngine:
         return df
 
     @staticmethod
-    def xlab_csv_file_builder(source: str, destination: str) -> None:
+    def build_xlab_csv_files(source: str, destination: str) -> None:
         """this class method  instantiates the XlabDataEngine,
         calls the build methods, converts them to tables using the
         petl python library, and then writes the tables to csv files.
@@ -233,7 +234,7 @@ class Runner:
     def cmd_line_interface() -> None:
 
         # instantiate classes
-        my_xlab_data_writer = XLabDataEngine()
+        my_xlab_data_builder = XLabDataEngine()
         my_warning_obj = Warnings()
         my_merger = Merger()
 
@@ -274,7 +275,7 @@ class Runner:
             try:
                 print("Generating master.csv file now...\n")
                 # generate X-lab csv files
-                my_xlab_data_writer.xlab_csv_file_builder(source, destination)
+                my_xlab_data_builder.build_xlab_csv_files(source, destination)
 
                 # throw warnings if necessary
                 my_warning_obj.warn_if_master_in_source_path(source)
