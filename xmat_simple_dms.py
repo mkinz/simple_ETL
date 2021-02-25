@@ -318,7 +318,8 @@ class Runner:
                       f"Please close all CSV and TXT files in source path, and try again.")
                 sys.exit(0)
         else:
-            print("Ok, exiting.")
+            print("Sorry, I didn't understand that.")
+            print("Exiting for safety!")
             sys.exit()
 
         return
