@@ -1,5 +1,4 @@
 # 02/25/2021 Matthew Kinzler for Citrine Informatics
-
 import re
 import os
 import sys
