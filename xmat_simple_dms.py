@@ -195,10 +195,8 @@ class Deleter:
 class WarningGenerator:
     """Warning class to give useful warnings when needed"""
 
-    def __init__(self):
-        self.warning = 'WARNING'
-
-    # attribute available for any instance to quickly throw a warning
+    # static variable
+    warning = "WARNING"
 
     @staticmethod
     def warn_if_master_in_source_path(source: str) -> None:
@@ -254,11 +252,6 @@ class Runner:
     @staticmethod
     def cmd_line_interface() -> None:
 
-        # instantiate classes
-        my_xlab_data_builder = XLabDataEngine()
-        my_warning_obj = WarningGenerator()
-        my_merger = Merger()
-
         print("Welcome to the Data Management System application!")
 
         print("Please enter the source path now:\n")
@@ -284,7 +277,7 @@ class Runner:
 
         # warning if source and destination match
         if source == destination:
-            print(my_warning_obj.warning)
+            print(WarningGenerator.warning)
             print("Source and destination are the same path!\n")
         print("Is this correct? Type [y]es or [n]o.")
 
@@ -296,21 +289,21 @@ class Runner:
             try:
                 print("Generating master.csv file now...\n")
                 # generate X-lab csv files
-                my_xlab_data_builder.build_xlab_csv_files(source, destination)
+                XLabDataEngine.build_xlab_csv_files(source, destination)
 
                 # throw warnings if necessary
-                my_warning_obj.warn_if_master_in_source_path(source)
-                my_warning_obj.warn_if_master_in_destination_path(destination)
+                WarningGenerator.warn_if_master_in_source_path(source)
+                WarningGenerator.warn_if_master_in_destination_path(destination)
 
                 # run the merger, merge *csv files in source, write output master csv to destination
-                my_merger.merge_csv(source, destination)
+                Merger.merge_csv(source, destination)
 
                 print(f"Done.\nX-Materials_master_data.csv file "
                       f"located in: \n{destination}\nExiting. Have a nice day!")
 
             # catch both index and value errors together in this tuple since the warning is the same
             except (IndexError, ValueError):
-                print(my_warning_obj.warning)
+                print(WarningGenerator.warning)
                 print(f"Cannot continue. Possibly missing data in your source path."
                       f"\nPlease double check your source path. It"
                       f" is currently set to: \n\n{source}\n")
@@ -318,7 +311,7 @@ class Runner:
 
             # warning if trying to work write files already open
             except PermissionError:
-                print(my_warning_obj.warning)
+                print(WarningGenerator.warning)
                 print(f"Cannot continue.\n"
                       f"Please close all CSV and TXT files in source path, and try again.")
                 sys.exit(0)
@@ -327,7 +320,6 @@ class Runner:
             sys.exit()
 
         return
-
 
 def main():
 
