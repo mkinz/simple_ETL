@@ -166,6 +166,7 @@ class Deleter:
         # if the file exists, remove it
         if os.path.isfile(os.path.join(source, master_csv)):
             os.remove(os.path.join(source, master_csv))
+
         return
 
 
@@ -303,8 +304,11 @@ class Runner:
             print("Ok, exiting.")
             sys.exit()
 
+        return
+
 
 def main():
+
     # instantiate a runner
     run_the_code = Runner()
 
@@ -315,6 +319,6 @@ def main():
 if __name__ == '__main__':
     main()
 
-# example paths for testing
+# test paths
 # C:\\Users\\matth\\Downloads\\dae-challenge
 # C:\\Users\\matth\\Downloads\\dae-challenge\\dae-challenge\\x-lab-data
