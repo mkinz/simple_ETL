@@ -125,7 +125,7 @@ class XLabDataEngine:
         Filenames are hard-coded in. """
 
 
-        if os.path.isfile(os.path.join(source, "*Hall*txt")):
+        if glob.glob(os.path.join(source,"*Hall*txt")):
 
         # build new XLabData dataframes with specific wildcards
             hall_data = XLabDataEngine().build_xlab_dataframe(source, "*Hall*txt")
@@ -134,11 +134,12 @@ class XLabDataEngine:
         # write tables to csv
             etl.tocsv(hall_table, os.path.join(destination, "hall_xlab.csv"))
 
-        elif os.path.isfile(os.path.join(source, "*ICP*txt")):
+        elif glob.glob(os.path.join(source,"*ICP*txt")):
             icp_data = XLabDataEngine().build_xlab_dataframe(source, "*ICP*txt")
             icp_table = etl.fromdataframe(icp_data)
             etl.tocsv(icp_table, os.path.join(destination, "icp_xlab.csv"))
         return
+
 
 
 class Deleter:
@@ -260,7 +261,7 @@ class Runner:
                       f"Please close all CSV and TXT files in source path, and try again.")
                 sys.exit(0)
         else:
-            print("Ok, exiting. Please check your paths and try again.")
+            print("Ok, exiting.")
             sys.exit()
 
 
