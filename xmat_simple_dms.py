@@ -25,13 +25,33 @@ class Merger:
         if file_to_remove in files_to_merge:
             files_to_merge.remove(file_to_remove)
 
-        # create list of dataframe objects from files in files_to_merge
-        dfs = [pd.read_csv(file) for file in files_to_merge]
+        # get a list of the file names that will be merged
+        file_names = [os.path.basename(source) for source in files_to_merge]
 
-        # join the dataframes together with an outer join, then save it as the master.csv file
-        merged_dataframe = pd.concat(dfs, axis=1, join='outer').to_csv(os.path.join(destination, "X-Materials_master_data.csv"))
+        # show the names of files to merge, and confirm
+        print("The following files will be merged:\n")
 
-        return merged_dataframe
+        for name in file_names:
+            print(name)
+
+        print("\nConfirm merge? Type [y]es or [n]o.")
+        affirmative = ["yes", "Yes", 'YES', 'y', 'Y']
+
+        answer = input()
+
+        if answer in affirmative:
+
+            # create list of dataframe objects from files in files_to_merge
+            dfs = [pd.read_csv(file) for file in files_to_merge]
+
+            # join the dataframes together with an outer join, then save it as the master.csv file
+            merged_dataframe = pd.concat(dfs, axis=1, join='outer')\
+                .to_csv(os.path.join(destination, "X-Materials_master_data.csv"))
+
+            return merged_dataframe
+        else:
+            print("Exiting without doing anything.")
+            sys.exit(0)
 
 
 class XLabDataEngine:
