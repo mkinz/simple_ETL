@@ -124,29 +124,21 @@ class XLabDataEngine:
         petl python library, and then writes the tables to csv files.
         Filenames are hard-coded in. """
 
-        wildcard_options = ["*Hall*txt","*ICP*txt"]
-        for wildcard in wildcard_options:
-            data = XLabDataEngine().build_xlab_dataframe(source,wildcard)
-            data_table = etl.fromdataframe(data)
-            if wildcard == wildcard_options[0]:
-                etl.tocsv(data_table, os.path.join(destination, "hall_xlab.csv"))
-            elif wildcard == wildcard_options[1]:
-                etl.tocsv(data_table, os.path.join(destination, "icp_xlab.csv"))
-            else:
-                pass
-        return
-'''        # build new XLabData dataframes with specific wildcards
-        hall_data = XLabDataEngine().build_xlab_dataframe(source, "*Hall*txt")
-        icp_data = XLabDataEngine().build_xlab_dataframe(source, "*ICP*txt")
 
+        if os.path.isfile(os.path.join(source, "*Hall*txt")):
+
+        # build new XLabData dataframes with specific wildcards
+            hall_data = XLabDataEngine().build_xlab_dataframe(source, "*Hall*txt")
         # convert dataframes to tables with petl, needed for correct data formatting
-        hall_table = etl.fromdataframe(hall_data)
-        icp_table = etl.fromdataframe(icp_data)
-
+            hall_table = etl.fromdataframe(hall_data)
         # write tables to csv
-        etl.tocsv(hall_table, os.path.join(destination, "hall_xlab.csv"))
-        etl.tocsv(icp_table, os.path.join(destination, "icp_xlab.csv"))
-        return'''
+            etl.tocsv(hall_table, os.path.join(destination, "hall_xlab.csv"))
+
+        elif os.path.isfile(os.path.join(source, "*ICP*txt")):
+            icp_data = XLabDataEngine().build_xlab_dataframe(source, "*ICP*txt")
+            icp_table = etl.fromdataframe(icp_data)
+            etl.tocsv(icp_table, os.path.join(destination, "icp_xlab.csv"))
+        return
 
 
 class Deleter:
@@ -211,87 +203,66 @@ class Runner:
     Messy and should probably be broken into functions"""
 
     def cmd_line_interface(self) -> None:
-
-        #instantiate classes
+        # instantiate classes
         myXlab_data_writer = XLabDataEngine()
         myWarningObj = Warnings()
         myMerger = CSVMerger()
 
         print("Welcome to the Data Management System application!")
         print("Please enter the source path now:\n")
-        while True:
-            source = input()
-            if not os.path.isdir(source):
-                print(f"{source} is not a valid path.\n\nPlease double check your path "
-                      f"and try running the app again.")
-                sys.exit()
-            print("Please enter the destination (path to save files) now:\n")
-            destination = input()
-            if not os.path.isdir(destination):
-                print(f"{destination} is not a valid path.\n\nPlease double check your path "
-                      f"and try running the app again.")
-                sys.exit()
-            print(f"Your source path is: \n{source}\n\n and destination path is: \n{destination}\n")
-            if source == destination:
-                print(myWarningObj.warning)
-                print("Source and destination are the same path!\n")
-            print("Is this correct? Type [y]es or [n]o.")
-            answer = input()
-            affirmative = ["yes", "Yes", 'YES', 'y', 'Y']
-            negative = ["no", "No", "NO", "n", "N", "no siree"]
-
-            if answer in affirmative:
-                break
-            elif answer in negative:
-                print("Ok, exiting. Please check your paths and try again.")
-                sys.exit() #this should probably be in a while loop
-        print("\nSource and destination paths saved.\n")
-        while True:
-            print('What would you like to do?')
-            print("1. Generate new master CSV from existing files in source")
-            print("2: Quit")
-
-            # the program only does one thing now, but I built the option selector for easy extension future extensibilly
+        source = input()
+        if not os.path.isdir(source):
+            print(f"{source} is not a valid path.\n\nPlease double check your path "
+                  f"and try running the app again.")
+            sys.exit()
+        print("Please enter the destination (path to save files) now:\n")
+        destination = input()
+        if not os.path.isdir(destination):
+            print(f"{destination} is not a valid path.\n\nPlease double check your path "
+                  f"and try running the app again.")
+            sys.exit()
+        print(f"Your source path is: \n{source}\n\n and destination path is: \n{destination}\n")
+        if source == destination:
+            print(myWarningObj.warning)
+            print("Source and destination are the same path!\n")
+        print("Is this correct? Type [y]es or [n]o.")
+        answer = input()
+        affirmative = ["yes", "Yes", 'YES', 'y', 'Y']
+        negative = ["no", "No", "NO", "n", "N", "no siree"]
+        if answer in affirmative:
             try:
-                options = int(input())
-                if options == 1:
-                    try:
-                        print("Generating master.csv file now...\n")
-                        # generate X-lab csv files
-                        myXlab_data_writer.xlab_csv_file_builder(source, destination)
+                print("Generating master.csv file now...\n")
+                # generate X-lab csv files
+                myXlab_data_writer.xlab_csv_file_builder(source, destination)
 
-                        # throw warnings if necessary
-                        myWarningObj.warning_if_master_in_source_path(source)
-                        myWarningObj.warning_if_master_in_destination_path(destination)
+                # throw warnings if necessary
+                myWarningObj.warning_if_master_in_source_path(source)
+                myWarningObj.warning_if_master_in_destination_path(destination)
 
-                        # run the merger, merge *csv files in source, write output master csv to destination
-                        myMerger.merge_csv(source, destination)
+                # run the merger, merge *csv files in source, write output master csv to destination
+                myMerger.merge_csv(source, destination)
 
-                        print(f"Done.\nX-Materials_master_data.csv file "
-                              f"located in: \n{destination}\nExiting. Have a nice day!")
-                        break
-                    except IndexError:
-                        print(myWarningObj.warning)
-                        print(f"Cannot continue. Possibly missing data in your source path."
-                              f"\nPlease double check your source path. It"
-                              f" is currently set to: \n\n{source}\n")
-                        sys.exit(-1)
-                    except PermissionError:
-                        print(myWarningObj.warning)
-                        print(f"Cannot continue.\n"
-                              f"Please close all CSV and TXT files in source path, and try again.")
-                        sys.exit(0)
-                elif options == 2:
-                    print("Exiting without doing anything.\nHave a nice day!")
-                    sys.exit(0)
-                else:
-                    print("Sorry, I didn't understand that.\nYou can only select 1 or 2.")
-            except ValueError:
-                print("You can only select 1 or 2.")
-            else:
-                print("I didn't understand that. Please try again.")
+                print(f"Done.\nX-Materials_master_data.csv file "
+                      f"located in: \n{destination}\nExiting. Have a nice day!")
 
-            return
+            # catch both index and value errors together in this tuple since the warning is the same
+            except (IndexError, ValueError):
+                print(myWarningObj.warning)
+                print(f"Cannot continue. Possibly missing data in your source path."
+                      f"\nPlease double check your source path. It"
+                      f" is currently set to: \n\n{source}\n")
+                sys.exit(-1)
+
+            # warning if trying to work write files already open
+            except PermissionError:
+                print(myWarningObj.warning)
+                print(f"Cannot continue.\n"
+                      f"Please close all CSV and TXT files in source path, and try again.")
+                sys.exit(0)
+        else:
+            print("Ok, exiting. Please check your paths and try again.")
+            sys.exit()
+
 
 def main():
 
@@ -304,9 +275,11 @@ def main():
 if __name__ == '__main__':
     main()
 
+#C:\\Users\\matth\\Downloads\\dae-challenge
+
+#C:\\Users\\matth\\Downloads\\dae-challenge\\dae-challenge\\x-lab-data
 
 
-#source = 'C:\\Users\\matth\\Downloads\\dae-challenge\\dae-challenge\\x-lab-data'
 #destination = 'C:\\Users\\matth\\Downloads\\dae-challenge\\dae-challenge\\x-lab-data'
 
 '''source = 'C:\\Users\\matth\\Downloads\\dae-challenge'
