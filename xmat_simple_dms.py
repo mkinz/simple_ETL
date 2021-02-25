@@ -159,6 +159,44 @@ class Deleter:
             os.remove(os.path.join(source, master_csv))
         return
 
+class Warnings:
+    """Deleter class has two methods for deleting files.
+    Currently only using the delete_current_master_csv_file()
+    class method in the runner to protect against possibly
+    including the master.csv in the collection of individual
+    CSV files. Redundant because of merger method protection."""
+
+    warning = 'WARNING'
+
+    def warning_if_master_in_source_path(self, source: str) -> None:
+        """look for a master csv file in the destination path
+        and remove it if it exists"""
+
+        master_csv = "X-Materials_master_data.csv"
+        if os.path.isfile(os.path.join(source, master_csv)):
+            print("It looks like you already had a "
+                  "master csv file in your source directory.\n"
+                  "This will cause problems. Please remove it and try again.")
+            sys.exit(0)
+        return
+
+    def warning_if_master_in_destination_path(self, destination: str) -> None:
+        """look for a master csv file in the destination path
+        and remove it if it exists"""
+
+        master_csv = "X-Materials_master_data.csv"
+        if os.path.isfile(os.path.join(destination, master_csv)):
+            print("Master CSV file already exists in destination path.\n"
+                  "OK to overwrite?\n"
+                  "You can select [y]es or [n]o")
+            affirmative = ["yes", "Yes", 'YES', 'y', 'Y']
+            answer = input()
+            if answer in affirmative:
+                pass
+            else:
+                print("Exiting without doing anything.")
+                sys.exit(0)
+        return
 
 class Runner:
     """This is the runner class for the command line interface
@@ -209,9 +247,11 @@ class Runner:
                         myXlab_data_writer = XLabDataEngine()
                         myXlab_data_writer.xlab_csv_file_builder(source, destination)
 
-                        # run deleter just to make sure there is no master csv in the source path
-                        myDeleter = Deleter()
-                        myDeleter.delete_current_master_csv_file(source)
+
+                        # build a warning object and throw warnings if necessary
+                        myWarningObj = Warnings()
+                        myWarningObj.warning_if_master_in_source_path(source)
+                        myWarningObj.warning_if_master_in_destination_path(destination)
 
                         # run the merger, merge *csv files in source, write output master csv to destination
                         myMerger = CSVMerger()
@@ -225,6 +265,10 @@ class Runner:
                               f"\nPlease double check your source path. It"
                               f" is currently set to: \n\n{source}\n")
                         sys.exit(-1)
+                    except PermissionError:
+                        print(f"WARNING: Cannot continue.\n"
+                              f"Please close all CSV and TXT files in source path, and try again.")
+                        sys.exit(0)
                 elif options == 2:
                     print("Exiting without doing anything.\nHave a nice day!")
                     sys.exit(0)
@@ -237,7 +281,7 @@ class Runner:
 
             return
 
-'''def main():
+def main():
 
     # instantiate a runner
     run_the_code = Runner()
@@ -246,14 +290,14 @@ class Runner:
     run_the_code.cmd_line_interface()
 
 if __name__ == '__main__':
-    main()'''
+    main()
 
 
 
 #source = 'C:\\Users\\matth\\Downloads\\dae-challenge\\dae-challenge\\x-lab-data'
 #destination = 'C:\\Users\\matth\\Downloads\\dae-challenge\\dae-challenge\\x-lab-data'
 
-source = 'C:\\Users\\matth\\Downloads\\dae-challenge'
+'''source = 'C:\\Users\\matth\\Downloads\\dae-challenge'
 destination = 'C:\\Users\\matth\\Downloads\\dae-challenge'
 myXlab_data_writer = XLabDataEngine()
-myXlab_data_writer.xlab_csv_file_builder(source, destination)
+myXlab_data_writer.xlab_csv_file_builder(source, destination)'''
