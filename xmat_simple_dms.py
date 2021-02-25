@@ -35,12 +35,11 @@ class Merger:
 
 
 class XLabDataEngine:
-    """This class contains the methods
-    that make up the engine which drives the conversion of
+    """This class contains the methods that drives the conversion of
     the xlab data files into a formatted, single CSV file.
-    The data is formatted in a 2x10 or 2x12 matrix,
+    The raw data is formatted in a 2x10 or 2x12 matrix,
     and the engine converts these files into a single
-    10xN or 12xN matrix with all data contain within."""
+    10xN or 12xN matrix csv file with all data contain within."""
 
     @staticmethod
     def set_up_headers(source: str, wildcard: str) -> list:
@@ -51,15 +50,10 @@ class XLabDataEngine:
         written out into a single row."""
 
         # set the path
-        # path = source + wildcard
         path = os.path.join(source, wildcard)
 
-        # list to hold files
-        files_to_read = []
-
-        # iterate over files in path, adding them to the list
-        for file in glob.glob(path):
-            files_to_read.append(file)
+        # iterate over files in path, adding them to a list
+        files_to_read = [file for file in glob.glob(path)]
 
         # regex to capture all the data in column 1 of Hall*txt of ICP*txt
         regex = re.compile('(.*)\t.*')
