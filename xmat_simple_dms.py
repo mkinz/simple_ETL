@@ -5,6 +5,7 @@ import sys
 import glob
 import pandas as pd
 import petl as etl
+from pandas import DataFrame
 
 
 class Merger:
@@ -113,7 +114,7 @@ class XLabDataEngine:
         data_headers = XLabDataEngine().set_up_headers(source, wildcard)
 
         # now we create a data frame using the instance created above
-        df = pd.DataFrame(columns=data_headers)
+        df: DataFrame = pd.DataFrame(columns=data_headers)
 
         # this all repeats as above, again not DRY but we're going fast for time's sake
         for file in files_to_read:
