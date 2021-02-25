@@ -171,7 +171,7 @@ class Deleter:
         return
 
 
-class Warnings:
+class WarningGenerator:
     """Warning class to give useful warnings when needed"""
 
     def __init__(self):
@@ -235,7 +235,7 @@ class Runner:
 
         # instantiate classes
         my_xlab_data_builder = XLabDataEngine()
-        my_warning_obj = Warnings()
+        my_warning_obj = WarningGenerator()
         my_merger = Merger()
 
         print("Welcome to the Data Management System application!")
