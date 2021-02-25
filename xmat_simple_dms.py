@@ -1,28 +1,30 @@
 import re
-import pandas as pd
-import petl as etl
 import os
 import sys
 import glob
-
+import pandas as pd
+import petl as etl
 
 class CSVMerger:
 
     """Merger class with single class method
     for merging all the CSV files together.
     It has built in protection to ensure that we
-    do not join an master.csv file into the final
+    do not join a master.csv file into the final
     master.csv file"""
 
     def merge_csv(self, source: str, destination: str) -> pd.DataFrame:
         # generate list of files to merge
         files_to_merge = glob.glob(os.path.join(source, "*csv"))
+
         # these next steps ensure we aren't merging a master.csv file with other files to make a new master.csv
         file_to_remove = os.path.isfile(os.path.join(source,"X-Materials_master_data.csv"))
         if file_to_remove in files_to_merge:
             files_to_merge.remove(file_to_remove)
+
         # create dataframe of the files in files_to_merge
         dfs = [pd.read_csv(file) for file in files_to_merge]
+
         # join the dataframes together with an outer join, then save it as the master.csv file
         finaldf = pd.concat(dfs, axis=1, join='outer').to_csv(os.path.join(destination, "X-Materials_master_data.csv"))
         return finaldf
@@ -46,8 +48,10 @@ class XLabDataEngine:
         # set the path
         # path = source + wildcard
         path = os.path.join(source, wildcard)
+
         # list to hold files
         files_to_read = []
+
         # iterate over files in path, adding them to the list
         for file in glob.glob(path):
             files_to_read.append(file)
@@ -57,15 +61,20 @@ class XLabDataEngine:
 
         # another list to hold the data found with the regex capture
         header_row_content = []
+
         # use first file in files_to_read to get headers
         # (this is definitely memory inefficient, but it's simple and works for the sake of time)
         with open(files_to_read[0], 'r') as f:
+
             # read the contents of the first file in files_to_read
             mydata = f.read()
+
             # iterate on the data in column 1 using regex findall method
             for col1 in re.findall(regex, mydata):
+
                 # for each item found, add it to header_row_content
                 header_row_content.append((col1))
+
         # return this list of header row content, it will be used later to create the full dataframe
         return header_row_content
 
@@ -84,22 +93,28 @@ class XLabDataEngine:
 
         # instantiate an instance of the data engine, call the set_up_headers method to return list of headers
         data_headers = XLabDataEngine().set_up_headers(source, wildcard)
+
         # now we create a data frame using the instance created above
         df = pd.DataFrame(columns=data_headers)
 
         # this all repeats as above, again not DRY but we're going fast for time's sake
         for file in files_to_read:
             list_of_data_from_column_two_for_dataframe_row = []
+
             # open each file and read the contents
             with open(file, 'r') as f:
                 mydata = f.read()
+
                 # use regex findall method to find matches in the data
                 for col2 in re.findall(regex, mydata):
+
                     # append list with matches
                     list_of_data_from_column_two_for_dataframe_row.append((col2))
+
                 # take dataframe with headers only, and insert each line from
                 # list_of_data_from_column_two_for_dataframe_row into the dataframe
                 df.loc[file] = list_of_data_from_column_two_for_dataframe_row
+
         # return shiny new dataframe with all the data
         return df
 
@@ -129,7 +144,7 @@ class Deleter:
     including the master.csv in the collection of individual
     CSV files. Redundant because of merger method protection."""
 
-    def delete_temp_xlab_csv_files(self, source: str) -> None:
+    def delete_temp_xlab_csv_files(self, source: str) -> None: #currently not using this methood
         xlab_files = ["hall_xlab.csv", "icp_xlab.csv"]
         for file in xlab_files:
             if os.path.isfile(os.path.join(source, file)):
@@ -138,6 +153,7 @@ class Deleter:
     def delete_current_master_csv_file(self, source: str) -> None:
         """look for a master csv file in the destination path
         and remove it if it exists"""
+
         master_csv = "X-Materials_master_data.csv"
         if os.path.isfile(os.path.join(source, master_csv)):
             os.remove(os.path.join(source, master_csv))
@@ -147,7 +163,8 @@ class Deleter:
 class Runner:
     """This is the runner class for the command line interface
     that makes use of a single class method. Self explanatory,
-    with conditional logic and a few loops to get input."""
+    with conditional logic and a few loops to get input.
+    Messy and should probably be broken into functions"""
 
     def cmd_line_interface(self) -> None:
         print("Welcome to the Data Management System application!")
@@ -188,12 +205,15 @@ class Runner:
                     try:
                         print("Generating master.csv file now...\n")
 
+                        # generate X-lab csv files
                         myXlab_data_writer = XLabDataEngine()
                         myXlab_data_writer.xlab_csv_file_builder(source, destination)
 
+                        # run deleter just to make sure there is no master csv in the source path
                         myDeleter = Deleter()
-                        myDeleter.delete_current_master_csv_file(destination)
+                        myDeleter.delete_current_master_csv_file(source)
 
+                        # run the merger, merge *csv files in source, write output master csv to destination
                         myMerger = CSVMerger()
                         myMerger.merge_csv(source, destination)
 
@@ -217,14 +237,23 @@ class Runner:
 
             return
 
-def main():
-    myrunner = Runner().cmd_line_interface()
+'''def main():
+
+    # instantiate a runner
+    run_the_code = Runner()
+
+    # then run it!
+    run_the_code.cmd_line_interface()
 
 if __name__ == '__main__':
-    main()
+    main()'''
 
 
 
-'''source = 'C:\\Users\\matth\\Downloads\\dae-challenge\\dae-challenge\\x-lab-data'
-destination = 'C:\\Users\\matth\\Downloads\\dae-challenge\\dae-challenge\\x-lab-data'
-'''
+#source = 'C:\\Users\\matth\\Downloads\\dae-challenge\\dae-challenge\\x-lab-data'
+#destination = 'C:\\Users\\matth\\Downloads\\dae-challenge\\dae-challenge\\x-lab-data'
+
+source = 'C:\\Users\\matth\\Downloads\\dae-challenge'
+destination = 'C:\\Users\\matth\\Downloads\\dae-challenge'
+myXlab_data_writer = XLabDataEngine()
+myXlab_data_writer.xlab_csv_file_builder(source, destination)
