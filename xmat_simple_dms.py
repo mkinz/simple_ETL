@@ -124,22 +124,22 @@ class XLabDataEngine:
         petl python library, and then writes the tables to csv files.
         Filenames are hard-coded in. """
 
-
+        # check to see if we have Hall*txt files in the source dir
         if glob.glob(os.path.join(source,"*Hall*txt")):
 
-        # build new XLabData dataframes with specific wildcards
+            # build new XLabData dataframes with specific wildcards
             hall_data = XLabDataEngine().build_xlab_dataframe(source, "*Hall*txt")
-        # convert dataframes to tables with petl, needed for correct data formatting
+            # convert dataframes to tables with petl, needed for correct data formatting
             hall_table = etl.fromdataframe(hall_data)
-        # write tables to csv
+            # write tables to csv
             etl.tocsv(hall_table, os.path.join(destination, "hall_xlab.csv"))
 
+        # really dislike how not DRY this is; need to refactor at some point
         elif glob.glob(os.path.join(source,"*ICP*txt")):
             icp_data = XLabDataEngine().build_xlab_dataframe(source, "*ICP*txt")
             icp_table = etl.fromdataframe(icp_data)
             etl.tocsv(icp_table, os.path.join(destination, "icp_xlab.csv"))
         return
-
 
 
 class Deleter:
