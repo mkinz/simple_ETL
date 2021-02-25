@@ -284,7 +284,7 @@ class Runner:
         print("Is this correct? Type [y]es or [n]o.")
 
         answer = input()
-        affirmative = ["yes", "Yes", 'YES', 'y', 'Y']
+        affirmative = ["yes", "Yes", 'YES', 'y', 'Y'] # definitely should use regex match here
 
         # conditional do stuff
         if answer in affirmative:
@@ -318,7 +318,8 @@ class Runner:
                       f"Please close all CSV and TXT files in source path, and try again.")
                 sys.exit(0)
         else:
-            print("Sorry, I didn't understand that.")
+            print(WarningGenerator.warning)
+            print("Need to confirm that it's OK for source and destination path to match.")
             print("Exiting for safety!")
             sys.exit()
 
