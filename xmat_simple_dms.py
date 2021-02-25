@@ -241,6 +241,8 @@ class Runner:
             print('What would you like to do?')
             print("1. Generate new master CSV from existing files in source")
             print("2: Quit")
+
+            # the program only does one thing now, but I built the option selector for easy extension future extensibilly
             try:
                 options = int(input())
                 if options == 1:
