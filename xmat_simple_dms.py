@@ -157,12 +157,9 @@ class Deleter:
         return
 
 class Warnings:
-    """Deleter class has two methods for deleting files.
-    Currently only using the delete_current_master_csv_file()
-    class method in the runner to protect against possibly
-    including the master.csv in the collection of individual
-    CSV files. Redundant because of merger method protection."""
+    """Warning class to give useful warnings when needed"""
 
+    # attribute available for any instance to quickly throw a warning
     warning = 'WARNING'
 
     def warning_if_master_in_source_path(self, source: str) -> None:
