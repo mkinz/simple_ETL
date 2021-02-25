@@ -179,7 +179,7 @@ class Warnings:
     # attribute available for any instance to quickly throw a warning
 
     @staticmethod
-    def warning_if_master_in_source_path(source: str) -> None:
+    def warn_if_master_in_source_path(source: str) -> None:
         """look for a master csv file in the destination path
         and remove it if it exists"""
 
@@ -195,7 +195,7 @@ class Warnings:
         return
 
     @staticmethod
-    def warning_if_master_in_destination_path(destination: str) -> None:
+    def warn_if_master_in_destination_path(destination: str) -> None:
         """look for a master csv file in the destination path
         and remove it if it exists"""
 
@@ -277,8 +277,8 @@ class Runner:
                 my_xlab_data_writer.xlab_csv_file_builder(source, destination)
 
                 # throw warnings if necessary
-                my_warning_obj.warning_if_master_in_source_path(source)
-                my_warning_obj.warning_if_master_in_destination_path(destination)
+                my_warning_obj.warn_if_master_in_source_path(source)
+                my_warning_obj.warn_if_master_in_destination_path(destination)
 
                 # run the merger, merge *csv files in source, write output master csv to destination
                 my_merger.merge_csv(source, destination)
