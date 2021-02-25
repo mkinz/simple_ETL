@@ -124,7 +124,18 @@ class XLabDataEngine:
         petl python library, and then writes the tables to csv files.
         Filenames are hard-coded in. """
 
-        # build new XLabData dataframes with specific wildcards
+        wildcard_options = ["*Hall*txt","*ICP*txt"]
+        for wildcard in wildcard_options:
+            data = XLabDataEngine().build_xlab_dataframe(source,wildcard)
+            data_table = etl.fromdataframe(data)
+            if wildcard == wildcard_options[0]:
+                etl.tocsv(data_table, os.path.join(destination, "hall_xlab.csv"))
+            elif wildcard == wildcard_options[1]:
+                etl.tocsv(data_table, os.path.join(destination, "icp_xlab.csv"))
+            else:
+                pass
+        return
+'''        # build new XLabData dataframes with specific wildcards
         hall_data = XLabDataEngine().build_xlab_dataframe(source, "*Hall*txt")
         icp_data = XLabDataEngine().build_xlab_dataframe(source, "*ICP*txt")
 
@@ -135,7 +146,7 @@ class XLabDataEngine:
         # write tables to csv
         etl.tocsv(hall_table, os.path.join(destination, "hall_xlab.csv"))
         etl.tocsv(icp_table, os.path.join(destination, "icp_xlab.csv"))
-        return
+        return'''
 
 
 class Deleter:
@@ -246,7 +257,6 @@ class Runner:
                 if options == 1:
                     try:
                         print("Generating master.csv file now...\n")
-                        print(myWarningObj.warning)
                         # generate X-lab csv files
                         myXlab_data_writer.xlab_csv_file_builder(source, destination)
 
@@ -257,7 +267,7 @@ class Runner:
                         # run the merger, merge *csv files in source, write output master csv to destination
                         myMerger.merge_csv(source, destination)
 
-                        print(f"Done.\nX-Materials_master_CSV.csv file "
+                        print(f"Done.\nX-Materials_master_data.csv file "
                               f"located in: \n{destination}\nExiting. Have a nice day!")
                         break
                     except IndexError:
