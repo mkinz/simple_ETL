@@ -139,10 +139,7 @@ class XLabDataEngine:
 
 class Deleter:
     """Deleter class has two methods for deleting files.
-    Currently only using the delete_current_master_csv_file()
-    class method in the runner to protect against possibly
-    including the master.csv in the collection of individual
-    CSV files. Redundant because of merger method protection."""
+    Currently unused but we have the option if needed"""
 
     def delete_temp_xlab_csv_files(self, source: str) -> None: #currently not using this methood
         xlab_files = ["hall_xlab.csv", "icp_xlab.csv"]
@@ -174,8 +171,8 @@ class Warnings:
 
         master_csv = "X-Materials_master_data.csv"
         if os.path.isfile(os.path.join(source, master_csv)):
-            print("It looks like you already had a "
-                  "master csv file in your source directory.\n"
+            print("It looks like you already have a "
+                  "master CSV file in your source directory.\n"
                   "This will cause problems. Please remove it and try again.")
             sys.exit(0)
         return
@@ -205,6 +202,12 @@ class Runner:
     Messy and should probably be broken into functions"""
 
     def cmd_line_interface(self) -> None:
+
+        #instantiate classes
+        myXlab_data_writer = XLabDataEngine()
+        myWarningObj = Warnings()
+        myMerger = CSVMerger()
+
         print("Welcome to the Data Management System application!")
         print("Please enter the source path now:\n")
         while True:
@@ -221,7 +224,8 @@ class Runner:
                 sys.exit()
             print(f"Your source path is: \n{source}\n\n and destination path is: \n{destination}\n")
             if source == destination:
-                print("WARNING: source and destination are the same path!\n")
+                print(myWarningObj.warning)
+                print("Source and destination are the same path!\n")
             print("Is this correct? Type [y]es or [n]o.")
             answer = input()
             affirmative = ["yes", "Yes", 'YES', 'y', 'Y']
@@ -242,31 +246,29 @@ class Runner:
                 if options == 1:
                     try:
                         print("Generating master.csv file now...\n")
-
+                        print(myWarningObj.warning)
                         # generate X-lab csv files
-                        myXlab_data_writer = XLabDataEngine()
                         myXlab_data_writer.xlab_csv_file_builder(source, destination)
 
-
-                        # build a warning object and throw warnings if necessary
-                        myWarningObj = Warnings()
+                        # throw warnings if necessary
                         myWarningObj.warning_if_master_in_source_path(source)
                         myWarningObj.warning_if_master_in_destination_path(destination)
 
                         # run the merger, merge *csv files in source, write output master csv to destination
-                        myMerger = CSVMerger()
                         myMerger.merge_csv(source, destination)
 
                         print(f"Done.\nX-Materials_master_CSV.csv file "
                               f"located in: \n{destination}\nExiting. Have a nice day!")
                         break
                     except IndexError:
-                        print(f"WARNING: Cannot continue. Possibly missing data in your source path."
+                        print(myWarningObj.warning)
+                        print(f"Cannot continue. Possibly missing data in your source path."
                               f"\nPlease double check your source path. It"
                               f" is currently set to: \n\n{source}\n")
                         sys.exit(-1)
                     except PermissionError:
-                        print(f"WARNING: Cannot continue.\n"
+                        print(myWarningObj.warning)
+                        print(f"Cannot continue.\n"
                               f"Please close all CSV and TXT files in source path, and try again.")
                         sys.exit(0)
                 elif options == 2:
