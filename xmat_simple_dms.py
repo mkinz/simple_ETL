@@ -154,7 +154,7 @@ class XLabDataEngine:
             # write tables to csv
             etl.tocsv(hall_table, os.path.join(destination, "hall_xlab.csv"))
 
-        # really dislike how not DRY this is; need to refactor at some point
+        # really dislike how not DRY this is; need to refactor at some point.
         elif glob.glob(os.path.join(source, "*ICP*txt")):
 
             icp_data = XLabDataEngine().build_xlab_dataframe(source, "*ICP*txt")
@@ -170,7 +170,7 @@ class Deleter:
     """Deleter class has two methods for deleting files.
     Currently unused but we have the option if needed"""
 
-    # currently not using this methood
+    # currently not using this method
     @staticmethod
     def delete_temp_xlab_csv_files(source: str) -> None:
 
@@ -178,7 +178,9 @@ class Deleter:
         for file in xlab_files:
             if os.path.isfile(os.path.join(source, file)):
                 os.remove(os.path.join(source, file))
+        return
 
+    # currently not using this method
     @staticmethod
     def delete_current_master_csv_file(source: str) -> None:
 
@@ -188,7 +190,6 @@ class Deleter:
         # if the file exists, remove it
         if os.path.isfile(os.path.join(source, master_csv)):
             os.remove(os.path.join(source, master_csv))
-
         return
 
 
