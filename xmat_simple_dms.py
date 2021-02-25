@@ -37,7 +37,7 @@ class Merger:
 
         print("\nConfirm merge? Type [y]es or [n]o.")
 
-        affirmative = ["yes", "Yes", 'YES', 'y', 'Y'] # definitely should be a regex match
+        affirmative = ["yes", "Yes", 'YES', 'y', 'Y']  # definitely should be a regex match
 
         answer = input()
 
@@ -47,7 +47,7 @@ class Merger:
             dfs = [pd.read_csv(file) for file in files_to_merge]
 
             # join the dataframes together with an outer join, then save it as the master.csv file
-            merged_dataframe = pd.concat(dfs, axis=1, join='outer')\
+            merged_dataframe = pd.concat(dfs, axis=1, join='outer') \
                 .to_csv(os.path.join(destination, "X-Materials_master_data.csv"))
 
             return merged_dataframe
@@ -86,7 +86,6 @@ class XLabDataEngine:
         # use first file in files_to_read to get headers
         # (this is definitely memory inefficient, but it's simple and works for the sake of time)
         with open(files_to_read[0], 'r') as f:
-
             # read the contents of the first file in files_to_read
             mydata = f.read()
 
@@ -284,7 +283,7 @@ class Runner:
         print("Is this correct? Type [y]es or [n]o.")
 
         answer = input()
-        affirmative = ["yes", "Yes", 'YES', 'y', 'Y'] # definitely should use regex match here
+        affirmative = ["yes", "Yes", 'YES', 'y', 'Y']  # definitely should use regex match here
 
         # conditional do stuff
         if answer in affirmative:
@@ -325,8 +324,8 @@ class Runner:
 
         return
 
-def main():
 
+def main():
     # instantiate a runner
     run_the_code = Runner()
 
