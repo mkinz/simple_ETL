@@ -35,6 +35,7 @@ class Merger:
             print(name)
 
         print("\nConfirm merge? Type [y]es or [n]o.")
+
         affirmative = ["yes", "Yes", 'YES', 'y', 'Y']
 
         answer = input()
