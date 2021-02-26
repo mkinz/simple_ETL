@@ -300,7 +300,7 @@ class Runner:
                 Merger.merge_csv(source, destination)
 
                 print(f"Done.\nX-Materials_master_data.csv file "
-                      f"located in: \n{destination}\nExiting. Have a nice day!")
+                      f"written to: \n{destination}\nExiting. Have a nice day!")
 
             # catch both index and value errors together in this tuple since the warning is the same
             except (IndexError, ValueError):
