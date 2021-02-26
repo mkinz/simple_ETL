@@ -15,6 +15,7 @@ class Merger:
     do not join a master.csv file into the final
     master.csv file"""
 
+    # none of these methods change the state of the class, so they are static
     @staticmethod
     def merge_csv(source: str, destination: str) -> pd.DataFrame:
 
@@ -140,28 +141,19 @@ class XLabDataEngine:
         """this class method  instantiates the XlabDataEngine,
         calls the build methods, converts them to tables using the
         petl python library, and then writes the tables to csv files.
-        Filenames are hard-coded in. """
+        Filenames are hard-coded in. Not DRY, should be refactored. """
 
-        # check to see if we have Hall*txt files in the source dir
-        if glob.glob(os.path.join(source, "*Hall*txt")):
+        # build hall and icp dataframes
+        hall_data = XLabDataEngine().build_xlab_dataframe(source, "*Hall*txt")
+        icp_data = XLabDataEngine().build_xlab_dataframe(source, "*ICP*txt")
 
-            # build new XLabData dataframes with specific wildcards
-            hall_data = XLabDataEngine().build_xlab_dataframe(source, "*Hall*txt")
+        # convert dataframes to tables with petl, needed for correct data formatting
+        hall_table = etl.fromdataframe(hall_data)
+        icp_table = etl.fromdataframe(icp_data)
 
-            # convert dataframes to tables with petl, needed for correct data formatting
-            hall_table = etl.fromdataframe(hall_data)
-
-            # write tables to csv
-            etl.tocsv(hall_table, os.path.join(destination, "hall_xlab.csv"))
-
-        # really dislike how not DRY this is; need to refactor at some point.
-        elif glob.glob(os.path.join(source, "*ICP*txt")):
-
-            icp_data = XLabDataEngine().build_xlab_dataframe(source, "*ICP*txt")
-
-            icp_table = etl.fromdataframe(icp_data)
-
-            etl.tocsv(icp_table, os.path.join(destination, "icp_xlab.csv"))
+        # write tables to csv
+        etl.tocsv(hall_table, os.path.join(source, "hall_xlab.csv"))
+        etl.tocsv(icp_table, os.path.join(source, "icp_xlab.csv"))
 
         return
 
