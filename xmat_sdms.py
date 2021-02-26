@@ -253,7 +253,7 @@ class Runner:
     @staticmethod
     def cmd_line_interface() -> None:
 
-        print("Welcome to the Data Management System application!")
+        print("Welcome to the Simple Data Management System!")
 
         print("Please enter the source path now:\n")
         source = input()
