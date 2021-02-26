@@ -318,11 +318,8 @@ class Runner:
 
 
 def main():
-    # instantiate a runner
-    run_the_code = Runner()
-
-    # then run it!
-    run_the_code.cmd_line_interface()
+    # run it!
+    Runner.cmd_line_interface()
 
 
 if __name__ == '__main__':
