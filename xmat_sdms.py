@@ -26,6 +26,8 @@ class Merger:
         # Note: this is redundant, as the WarningGenerator.warn_if_master_in_source_path() will exit the program
         # if a master CSV is found in the source path
         file_to_remove = os.path.join(source, "X-Materials_master_data.csv")
+
+        # if the master CSV file is in the list files_to_merge, remove it
         if file_to_remove in files_to_merge:
             files_to_merge.remove(file_to_remove)
 
