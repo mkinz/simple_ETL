@@ -9,7 +9,7 @@ from pandas import DataFrame
 
 
 class Merger:
-    """Merger class with single class method
+    """Merger class with single static method
     for merging all the CSV files together.
     It has built in protection to ensure that we
     do not join a master.csv file into the final
@@ -146,7 +146,7 @@ class XLabDataEngine:
 
     @staticmethod
     def build_xlab_csv_files(source: str, destination: str) -> None:
-        """this class method  instantiates the XlabDataEngine,
+        """this method  instantiates the XlabDataEngine,
         calls the build methods, converts them to tables using the
         petl python library, and then writes the tables to csv files.
         Filenames are hard-coded in. Not DRY, should be refactored. """
@@ -246,7 +246,7 @@ class WarningGenerator:
 
 class Runner:
     """This is the runner class for the command line interface
-    that makes use of a single class method. Self explanatory,
+    that makes use of a single static method. Self explanatory,
     with conditional logic and a few loops to get input.
     Messy and should probably be broken into functions"""
 
