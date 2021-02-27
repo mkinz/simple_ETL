@@ -339,11 +339,15 @@ if __name__ == '__main__':
 ########################
 
 02/27/2021 
-refactored Merger.merge_csv() method to fix line 26. variable file_to_remove should 
+refactored Merger.merge_csv() method to fix line 26. Variable file_to_remove should 
 return a filename, not a boolean. This section of the method .merge_csv() should generate a list of files
 to merge, and if one of the files in the list is the master CSV, remove it from the list. I put this in
 as an extra check to prevent the code from merging a master CSV file in the source path with other CSV files.
-Prior to refactor, the code was checking if the file exists (True or False) rather than returning the file name.
-Note that this bug had no impact on the code, because of the WarningGenerator.warn_if_master_in_source_path() 
-class method which exits the program if a master CSV is found in the source path.
+The code should be returning the file name, so that we can iterate over the list of files to merge, 
+and remove that filename from the list of files to merge if the filename exists in the list of files to merge.
+Prior to refactor, the code was checking if the file exists (True or False), then attempting to use that boolean 
+value in the check for files to merge - (i.e. find True or False in files_to_merge), which obviously doesn't make sense. 
+Note that this bug had no impact on the code, because of the class method WarningGenerator.warn_if_master_in_source_path() 
+which forces the program to quit if a master CSV is found in the source path. WarningGenerator.warn_if_master_in_source_path() 
+is called before Merger.merge_csv() in the runner, so the program would quit before Merger.merge_csv() would execute. 
  '''
