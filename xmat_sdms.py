@@ -255,7 +255,7 @@ class Runner:
 
         print("Welcome to the Simple Data Management System!")
 
-        print("Please enter the source path now:\n")
+        print("Please enter the source (path where files to merge are located) now:\n")
         source = input()
 
         # input validation
