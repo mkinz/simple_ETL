@@ -23,8 +23,11 @@ class Merger:
         files_to_merge = glob.glob(os.path.join(source, "*csv"))
 
         # these next steps ensure we aren't merging a master.csv file with other files to make a new master.csv
-        # Note: this is redundant, as the WarningGenerator.warn_if_master_in_source_path() will exit the program
-        # if a master CSV is found in the source path
+        # Note: The method WarningGenerator.warn_if_master_in_source_path()
+        # will force the program to exit if a master CSV is found in the source path. Furthermore,
+        # WarningGenerator.warn_if_master_in_source_path() is called in the runner before Merger.merge_csv(),
+        # so this bit of code is actually redundant and can be safely removed in a future release.
+        # Leaving it in as it was part of my original submission on 02/26
         file_to_remove = os.path.join(source, "X-Materials_master_data.csv")
 
         # if the master CSV file is in the list files_to_merge, remove it
