@@ -15,7 +15,7 @@ class Merger:
     do not join a master.csv file into the final
     master.csv file"""
 
-    # none of these methods change the state of the class, so they are static
+    # none of these methods change the state of the object or class, so they are static
     @staticmethod
     def merge_csv(source: str, destination: str) -> pd.DataFrame:
 
