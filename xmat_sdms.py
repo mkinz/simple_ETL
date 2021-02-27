@@ -327,10 +327,11 @@ def main():
 if __name__ == '__main__':
     main()
 
+'''
 ########################
 ###### CHANGE LOG ######
 ########################
-'''
+
 02/27/2021 
 refactored Merger.merge_csv() method to fix line 26. variable file_to_remove should 
 return a filename, not a boolean. This section of the method .merge_csv() should generate a list of files
@@ -339,6 +340,4 @@ as an extra check to prevent the code from merging a master CSV file in the sour
 Prior to refactor, the code was checking if the file exists (True or False) rather than returning the file name.
 Note that this bug had no impact on the code, because of the WarningGenerator.warn_if_master_in_source_path() 
 class method which exits the program if a master CSV is found in the source path.
-
-Removed the Deleter class 
  '''
