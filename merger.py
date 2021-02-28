@@ -1,5 +1,6 @@
 import os
 import glob
+import sys
 import pandas as pd
 
 class Merger:
@@ -11,7 +12,7 @@ class Merger:
 
     # none of these methods change the state of the object or class, so they are static
     @staticmethod
-    def merge_csv(source: str, destination: str) -> pd.DataFrame:
+    def merge_csv(source: str, destination: str):
 
         # generate list of files to merge
         files_to_merge = glob.glob(os.path.join(source, "*csv"))
