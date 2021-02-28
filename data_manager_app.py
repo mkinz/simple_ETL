@@ -1,18 +1,5 @@
 # 02/25/2021 Matthew Kinzler for Citrine Informatics
-import re
-import os
-import sys
-import glob
-import pandas as pd
-import petl as etl
-from pandas import DataFrame
-from merger import Merger
-from xlabdataengine import XLabDataEngine
-
-
-
-
-
+from runner import Runner
 
 def main():
     # run it!
