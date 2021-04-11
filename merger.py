@@ -11,8 +11,7 @@ class Merger:
     master.csv file"""
 
     # none of these methods change the state of the object or class, so they are static
-    @staticmethod
-    def merge_csv(source: str, destination: str):
+    def merge_csv(self, source: str, destination: str):
 
         # generate list of files to merge
         files_to_merge = glob.glob(os.path.join(source, "*csv"))
