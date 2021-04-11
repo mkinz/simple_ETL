@@ -2,13 +2,18 @@ import os
 import sys
 from merger import Merger
 from labdataformatter import LabDataFormatter
-from warnings import WarningGenerator
+from warning_generator import WarningGenerator
 
 class Runner:
     """This is the runner class for the command line interface
     that makes use of a single static method. Self explanatory,
     with conditional logic and a few loops to get input.
     Messy and should probably be broken into functions"""
+
+    def __init__(self, merger, labdataformatter, warnings):
+        self.merger = merger
+        self.labdataformatter = labdataformatter
+        self.warnings = warnings
 
     def cmd_line_interface(self) -> None:
 
@@ -49,21 +54,21 @@ class Runner:
             try:
                 print("Generating master.csv file now...\n")
                 # generate X-lab csv files
-                LabDataFormatter.build_xlab_csv_files(source, destination)
+                self.labdataformatter.build_xlab_csv_files(source, destination)
 
                 # throw warnings if necessary
-                WarningGenerator.warn_if_master_in_source_path(source)
-                WarningGenerator.warn_if_master_in_destination_path(destination)
+                self.warnings.warn_if_master_in_source_path(source)
+                self.warnings.warn_if_master_in_destination_path(destination)
 
                 # run the merger, merge *csv files in source, write output master csv to destination
-                Merger.merge_csv(source, destination)
+                self.merger.merge_csv(source, destination)
 
                 print(f"Done.\nX-Materials_master_data.csv file "
                       f"written to: \n{destination}\nExiting. Have a nice day!")
 
             # catch both index and value errors together in this tuple since the warning is the same
             except (IndexError, ValueError):
-                print(WarningGenerator.warning)
+                print(self.warnings.warning)
                 print(f"Cannot continue. Possibly missing data in your source path."
                       f"\nPlease double check your source path. It"
                       f" is currently set to: \n\n{source}\n")
@@ -71,12 +76,12 @@ class Runner:
 
             # warning if trying to work write files already open
             except PermissionError:
-                print(WarningGenerator.warning)
+                print(self.warnings.warning)
                 print(f"Cannot continue.\n"
                       f"Please close all CSV and TXT files in source path, and try again.")
                 sys.exit(0)
         else:
-            print(WarningGenerator.warning)
+            print(self.warnings.warning)
             print("Need to confirm that it's OK for source and destination path to match.")
             print("Exiting for safety!")
             sys.exit()
