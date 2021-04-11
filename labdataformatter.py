@@ -44,7 +44,7 @@ class LabDataFormatter:
         # return this list of header row content, it will be used later to create the full dataframe
         return header_row_content
 
-    def build_xlab_dataframe(self, source: str, wildcard: str) -> pd.DataFrame:
+    def build_labdata_dataframe(self, source: str, wildcard: str) -> pd.DataFrame:
 
         # functionally very similar as above and not very DRY which hurts my soul a bit
         path = os.path.join(source, wildcard)
@@ -81,15 +81,15 @@ class LabDataFormatter:
         # return shiny new dataframe with all the data
         return df
 
-    def build_xlab_csv_files(self, source: str, destination: str) -> None:
+    def build_labdata_csv_files(self, source: str, destination: str) -> None:
         """this method  instantiates the XlabDataEngine,
         calls the build methods, converts them to tables using the
         petl python library, and then writes the tables to csv files.
         Filenames are hard-coded in. Not DRY, should be refactored. """
 
         # build hall and icp dataframes
-        hall_data = LabDataFormatter().build_xlab_dataframe(source, "*Hall*txt")
-        icp_data = LabDataFormatter().build_xlab_dataframe(source, "*ICP*txt")
+        hall_data = LabDataFormatter().build_labdata_dataframe(source, "*Hall*txt")
+        icp_data = LabDataFormatter().build_labdata_dataframe(source, "*ICP*txt")
 
         # convert dataframes to tables with petl, needed for correct data formatting
         hall_table = etl.fromdataframe(hall_data)

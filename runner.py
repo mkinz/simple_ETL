@@ -51,7 +51,7 @@ class Runner:
             try:
                 print("Generating master.csv file now...\n")
                 # generate X-lab csv files
-                self.labdataformatter.build_xlab_csv_files(source, destination)
+                self.labdataformatter.build_labdata_csv_files(source, destination)
 
                 # throw warnings if necessary
                 self.warning_generator.warn_if_master_in_source_path(source)
