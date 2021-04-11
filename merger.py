@@ -23,7 +23,7 @@ class Merger:
         # WarningGenerator.warn_if_master_in_source_path() is called in the runner before Merger.merge_csv(),
         # so lines 31-35 are redundant and can be safely removed in a future release.
         # Leaving it in as it was part of my original submission on 02/26
-        file_to_remove = os.path.join(source, "X-Materials_master_data.csv")
+        file_to_remove = os.path.join(source, "Materials_master_data.csv")
 
         # if the master CSV file is in the list files_to_merge, remove it
         if file_to_remove in files_to_merge:
@@ -51,7 +51,7 @@ class Merger:
 
             # join the dataframes together with an outer join, then save it as the master.csv file
             merged_dataframe = pd.concat(dfs, axis=1, join='outer') \
-                .to_csv(os.path.join(destination, "X-Materials_master_data.csv"))
+                .to_csv(os.path.join(destination, "Materials_master_data.csv"))
 
             return merged_dataframe
         else:

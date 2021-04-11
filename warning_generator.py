@@ -12,7 +12,7 @@ class WarningGenerator:
         and remove it if it exists"""
 
         # define filename
-        master_csv = "X-Materials_master_data.csv"
+        master_csv = "Materials_master_data.csv"
 
         # if found, print a warning message
         if os.path.isfile(os.path.join(source, master_csv)):
@@ -27,7 +27,7 @@ class WarningGenerator:
         and remove it if it exists"""
 
         # define filename
-        master_csv = "X-Materials_master_data.csv"
+        master_csv = "Materials_master_data.csv"
         if os.path.isfile(os.path.join(destination, master_csv)):
 
             # if found, print a warning message, ask if overwrite is ok
