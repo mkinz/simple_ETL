@@ -7,8 +7,7 @@ class WarningGenerator:
     # static variable
     warning = "WARNING"
 
-    @staticmethod
-    def warn_if_master_in_source_path(source: str) -> None:
+    def warn_if_master_in_source_path(sefl, source: str) -> None:
         """look for a master csv file in the destination path
         and remove it if it exists"""
 
@@ -23,8 +22,7 @@ class WarningGenerator:
             sys.exit(0)
         return
 
-    @staticmethod
-    def warn_if_master_in_destination_path(destination: str) -> None:
+    def warn_if_master_in_destination_path(self, destination: str) -> None:
         """look for a master csv file in the destination path
         and remove it if it exists"""
 
