@@ -11,8 +11,7 @@ class LabDataFormatter:
     and the engine converts these files into a single
     10xN or 12xN matrix csv file with all data contain within."""
 
-    @staticmethod
-    def set_up_headers(source: str, wildcard: str) -> list:
+    def set_up_headers(self, source: str, wildcard: str) -> list:
         """To convert the set of Hall*txt and ICP*txt files
         located in the path into a single 10xN or 12xN dataframe,
         we need do a lot of swizzling. First, we need to establish
@@ -45,8 +44,7 @@ class LabDataFormatter:
         # return this list of header row content, it will be used later to create the full dataframe
         return header_row_content
 
-    @staticmethod
-    def build_xlab_dataframe(source: str, wildcard: str) -> pd.DataFrame:
+    def build_xlab_dataframe(self, source: str, wildcard: str) -> pd.DataFrame:
 
         # functionally very similar as above and not very DRY which hurts my soul a bit
         path = os.path.join(source, wildcard)
@@ -83,8 +81,7 @@ class LabDataFormatter:
         # return shiny new dataframe with all the data
         return df
 
-    @staticmethod
-    def build_xlab_csv_files(source: str, destination: str) -> None:
+    def build_xlab_csv_files(self, source: str, destination: str) -> None:
         """this method  instantiates the XlabDataEngine,
         calls the build methods, converts them to tables using the
         petl python library, and then writes the tables to csv files.
