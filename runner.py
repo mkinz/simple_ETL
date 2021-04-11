@@ -65,7 +65,7 @@ class Runner:
 
             # catch both index and value errors together in this tuple since the warning is the same
             except (IndexError, ValueError):
-                print(self.warnings.warning)
+                print(self.warning_generator.warning)
                 print(f"Cannot continue. Possibly missing data in your source path."
                       f"\nPlease double check your source path. It"
                       f" is currently set to: \n\n{source}\n")
@@ -73,12 +73,12 @@ class Runner:
 
             # warning if trying to work write files already open
             except PermissionError:
-                print(self.warnings.warning)
+                print(self.warning_generator.warning)
                 print(f"Cannot continue.\n"
                       f"Please close all CSV and TXT files in source path, and try again.")
                 sys.exit(0)
         else:
-            print(self.warnings.warning)
+            print(self.warning_generator.warning)
             print("Need to confirm that it's OK for source and destination path to match.")
             print("Exiting for safety!")
             sys.exit()
