@@ -1,6 +1,5 @@
 import os
 import sys
-from warning_generator import WarningGenerator
 
 class Runner:
     """This is the runner class for the command line interface
