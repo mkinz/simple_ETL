@@ -3,7 +3,8 @@ from runner import Runner
 
 def main():
     # run it!
-    Runner.cmd_line_interface()
+    myRunner = Runner()
+    myRunner.cmd_line_interface()
 
 
 if __name__ == '__main__':
