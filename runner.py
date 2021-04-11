@@ -2,7 +2,7 @@ import os
 import sys
 from merger import Merger
 from labdataformatter import LabDataFormatter
-from warning import WarningGenerator
+from warnings import WarningGenerator
 
 class Runner:
     """This is the runner class for the command line interface
