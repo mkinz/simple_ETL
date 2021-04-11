@@ -1,7 +1,7 @@
 import os
 import sys
 from merger import Merger
-from xlabdataengine import XLabDataEngine
+from labdataformatter import LabDataFormatter
 from warning import WarningGenerator
 
 class Runner:
@@ -50,7 +50,7 @@ class Runner:
             try:
                 print("Generating master.csv file now...\n")
                 # generate X-lab csv files
-                XLabDataEngine.build_xlab_csv_files(source, destination)
+                LabDataFormatter.build_xlab_csv_files(source, destination)
 
                 # throw warnings if necessary
                 WarningGenerator.warn_if_master_in_source_path(source)

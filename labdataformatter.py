@@ -4,7 +4,7 @@ import glob
 import pandas as pd
 import petl as etl
 
-class XLabDataEngine:
+class LabDataFormatter:
     """This class contains the methods that drives the conversion of
     the xlab data files into a formatted, single CSV file.
     The raw data is formatted in a 2x10 or 2x12 matrix,
@@ -58,10 +58,10 @@ class XLabDataEngine:
         regex = re.compile('.*\t(.*)')
 
         # instantiate an instance of the data engine, call the set_up_headers method to return list of headers
-        data_headers = XLabDataEngine().set_up_headers(source, wildcard)
+        data_headers = LabDataFormatter().set_up_headers(source, wildcard)
 
         # now we create a data frame using the instance created above
-        df: DataFrame = pd.DataFrame(columns=data_headers)
+        df= pd.DataFrame(columns=data_headers)
 
         # this all repeats as above, again not DRY but we're going fast for time's sake
         for file in files_to_read:
@@ -91,8 +91,8 @@ class XLabDataEngine:
         Filenames are hard-coded in. Not DRY, should be refactored. """
 
         # build hall and icp dataframes
-        hall_data = XLabDataEngine().build_xlab_dataframe(source, "*Hall*txt")
-        icp_data = XLabDataEngine().build_xlab_dataframe(source, "*ICP*txt")
+        hall_data = LabDataFormatter().build_xlab_dataframe(source, "*Hall*txt")
+        icp_data = LabDataFormatter().build_xlab_dataframe(source, "*ICP*txt")
 
         # convert dataframes to tables with petl, needed for correct data formatting
         hall_table = etl.fromdataframe(hall_data)
