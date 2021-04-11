@@ -10,8 +10,7 @@ class Runner:
     with conditional logic and a few loops to get input.
     Messy and should probably be broken into functions"""
 
-    @staticmethod
-    def cmd_line_interface() -> None:
+    def cmd_line_interface(self) -> None:
 
         print("Welcome to the Simple Data Management System!")
 
