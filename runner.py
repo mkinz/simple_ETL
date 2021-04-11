@@ -1,7 +1,5 @@
 import os
 import sys
-from merger import Merger
-from labdataformatter import LabDataFormatter
 from warning_generator import WarningGenerator
 
 class Runner:
@@ -10,10 +8,10 @@ class Runner:
     with conditional logic and a few loops to get input.
     Messy and should probably be broken into functions"""
 
-    def __init__(self, merger, labdataformatter, warnings):
+    def __init__(self, merger, labdataformatter, warning_generator):
         self.merger = merger
         self.labdataformatter = labdataformatter
-        self.warnings = warnings
+        self.warning_generator = warning_generator
 
     def cmd_line_interface(self) -> None:
 
@@ -42,7 +40,7 @@ class Runner:
 
         # warning if source and destination match
         if source == destination:
-            print(WarningGenerator.warning)
+            print(self.warning_generator.warning)
             print("Source and destination are the same path!\n")
         print("Is this correct? Type [y]es or [n]o.")
 
@@ -57,8 +55,8 @@ class Runner:
                 self.labdataformatter.build_xlab_csv_files(source, destination)
 
                 # throw warnings if necessary
-                self.warnings.warn_if_master_in_source_path(source)
-                self.warnings.warn_if_master_in_destination_path(destination)
+                self.warning_generator.warn_if_master_in_source_path(source)
+                self.warning_generator.warn_if_master_in_destination_path(destination)
 
                 # run the merger, merge *csv files in source, write output master csv to destination
                 self.merger.merge_csv(source, destination)
