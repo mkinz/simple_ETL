@@ -96,8 +96,8 @@ class LabDataFormatter:
         icp_table = etl.fromdataframe(icp_data)
 
         # write tables to csv
-        etl.tocsv(hall_table, os.path.join(source, "hall_xlab.csv"))
-        etl.tocsv(icp_table, os.path.join(source, "icp_xlab.csv"))
+        etl.tocsv(hall_table, os.path.join(source, "lab1lab.csv"))
+        etl.tocsv(icp_table, os.path.join(source, "lab2lab.csv"))
 
         return
 
